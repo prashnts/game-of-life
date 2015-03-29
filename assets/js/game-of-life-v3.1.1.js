@@ -19,21 +19,15 @@
     running : false,
     autoplay : false,
 
-
-    // Clear state
     clear : {
       schedule : false
     },
 
-
-    // Average execution times
     times : {
       algorithm : 0,
       gui : 0
     },
 
-
-    // DOM elements
     element : {
       generation : null,
       steptime : null,
@@ -371,7 +365,7 @@
     },
 
 
-    /** ****************************************************************************************************************************
+    /**
      * Event Handerls
      */
     handlers : {
@@ -557,7 +551,7 @@
     },
 
 
-    /** ****************************************************************************************************************************
+    /**
      *
      */
     canvas: {
@@ -733,10 +727,6 @@
 
     },
 
-
-    /** ****************************************************************************************************************************
-     *
-     */
     listLife : {
 
       actualState : [],
@@ -751,35 +741,6 @@
       },
 
 
-      /**
-       *
-	NOTE: The following code is slower than the used one.
-	
-	(...)
-	
-	if (allDeadNeighbours[key] === undefined) {
-	  allDeadNeighbours[key] = {
-			x: deadNeighbours[m][0],
-			y: deadNeighbours[m][1],
-			i: 1
-		};
-	} else {
-	  allDeadNeighbours[key].i++;
-	}
-	
-	(...)
-			
-	// Process dead neighbours
-	for (key in allDeadNeighbours) {
-	  
-	  if (allDeadNeighbours[key].i === 3) { // Add new Cell
-		
-		this.addCell(allDeadNeighbours[key].x, allDeadNeighbours[key].y, newState);
-		alive++;
-		this.redrawList.push([allDeadNeighbours[key].x, allDeadNeighbours[key].y, 1]);
-	  }
-	}
-	*/
       nextGeneration : function() {
         var x, y, i, j, m, n, key, t1, t2, alive = 0, neighbours, deadNeighbours, allDeadNeighbours = {}, newState = [];
         this.redrawList = [];
