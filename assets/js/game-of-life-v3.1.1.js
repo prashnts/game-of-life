@@ -1,4 +1,4 @@
-/*jshint onevar: true, undef: false, nomen: true, eqeqeq: true, plusplus: false, bitwise: true, regexp: true, newcap: true, immed: true  */
+/*global alert: false, clearInterval: false, console: false, clearTimeout: false, document: false, event: false, frames: false, history: false, Image: false, jsonParse: false, location: false, name: false, navigator: false, Option: false, parent: false, screen: false, setInterval: false, setTimeout: false, window: false, XMLHttpRequest: false */
 
 /**
  * Game of Life - JS & CSS
@@ -188,7 +188,7 @@ var GOL = {
 
             this.prepare();
         } catch (e) {
-            alert("Error: "+e);
+            alert("Error: " + e);
         }
     },
 
@@ -245,11 +245,13 @@ var GOL = {
             }
 
             state = jsonParse(decodeURI(s));
-                
+
             for (i = 0; i < state.length; i += 1) {
                 for (y in state[i]) {
-                    for (j = 0; j < state[i][y].length; j += 1) {
-                        this.listLife.addCell(state[i][y][j], parseInt(y, 10), this.listLife.actualState);
+                    if (state[i].hasOwnProperty(y)) {
+                        for (j = 0; j < state[i][y].length; j += 1) {
+                            this.listLife.addCell(state[i][y][j], parseInt(y, 10), this.listLife.actualState);
+                        }
                     }
                 }
             }
@@ -332,7 +334,7 @@ var GOL = {
         this.helpers.registerEvent(document.getElementById('buttonRun'), 'click', this.handlers.buttons.run, false);
         this.helpers.registerEvent(document.getElementById('buttonStep'), 'click', this.handlers.buttons.step, false);
         this.helpers.registerEvent(document.getElementById('buttonClear'), 'click', this.handlers.buttons.clear, false);
-        this.helpers.registerEvent(document.getElementById('buttonExport'), 'click', this.handlers.buttons.export_, false);
+        this.helpers.registerEvent(document.getElementById('buttonExport'), 'click', this.handlers.buttons.export_state, false);
 
         // Layout
         this.helpers.registerEvent(document.getElementById('buttonTrail'), 'click', this.handlers.buttons.trail, false);
@@ -404,7 +406,7 @@ var GOL = {
         r = 1.0 / this.generation;
         this.times.algorithm = (this.times.algorithm * (1 - r)) + (algorithmTime * r);
         this.times.gui = (this.times.gui * (1 - r)) + (guiTime * r);
-        this.element.steptime.innerHTML = algorithmTime + ' / '+guiTime+' ('+Math.round(this.times.algorithm) + ' / '+Math.round(this.times.gui)+')';
+        this.element.steptime.innerHTML = algorithmTime + ' / ' + guiTime + ' (' + Math.round(this.times.algorithm) + ' / ' + Math.round(this.times.gui) + ')';
 
         // Flow Control
         if (this.running) {
@@ -579,7 +581,7 @@ var GOL = {
             /**
              * Button Handler - Export State
              */
-            export_ : function () {
+            export_state : function () {
                 "use strict";
                 var i, j, url = '', cellState = '', params = '';
 
@@ -592,7 +594,7 @@ var GOL = {
                     cellState = cellState.substring(0, cellState.length - 1) + ']},';
                 }
 
-                cellState = cellState.substring(0, cellState.length - 1) + '';
+                cellState = String(cellState.substring(0, cellState.length - 1));
 
                 if (cellState.length !== 0) {
                     url = (window.location.href.indexOf('?') === -1) ? window.location.href : window.location.href.slice(0, window.location.href.indexOf('?'));
@@ -605,7 +607,7 @@ var GOL = {
                         '&s=[' + cellState + ']';
 
                     document.getElementById('exportUrlLink').href = params;
-                    document.getElementById('exportTinyUrlLink').href = 'http://tinyurl.com/api-create.php?url='+ url + params;
+                    document.getElementById('exportTinyUrlLink').href = 'http://tinyurl.com/api-create.php?url=' + url + params;
                     document.getElementById('exportUrl').style.display = 'inline';
                 }
             }
@@ -814,7 +816,7 @@ var GOL = {
 
         nextGeneration : function () {
             "use strict";
-            var x, y, i, j, m, n, key, t1, t2, alive = 0, neighbours, deadNeighbours, allDeadNeighbours = {}, newState = [];
+            var x, y, i, j, m, key, t1, t2, alive = 0, neighbours, deadNeighbours, allDeadNeighbours = {}, newState = [];
             this.redrawList = [];
 
             for (i = 0; i < this.actualState.length; i += 1) {
@@ -1061,50 +1063,51 @@ var GOL = {
 
                 return;
 
-            } else if (y > state[state.length - 1][0]) { // Add to Tail
+            }
+
+            if (y > state[state.length - 1][0]) { // Add to Tail
                 state[state.length] = [y, x];
                 return;
 
-            } else { // Add to Middle
+            }
 
-                for (n = 0; n < state.length; n += 1) {
-                    if (state[n][0] === y) { // Level Exists
-                        tempRow = [];
-                        added = false;
-                        for (m = 1; m < state[n].length; m += 1) {
-                            if ((!added) && (x < state[n][m])) {
-                                tempRow.push(x);
-                                added = !added;
-                            }
-                            tempRow.push(state[n][m]);
-                        }
-                        tempRow.unshift(y);
-                        if (!added) {
+            for (n = 0; n < state.length; n += 1) {
+                if (state[n][0] === y) { // Level Exists
+                    tempRow = [];
+                    added = false;
+                    for (m = 1; m < state[n].length; m += 1) {
+                        if ((!added) && (x < state[n][m])) {
                             tempRow.push(x);
+                            added = !added;
                         }
-                        state[n] = tempRow;
-                        return;
+                        tempRow.push(state[n][m]);
+                    }
+                    tempRow.unshift(y);
+                    if (!added) {
+                        tempRow.push(x);
+                    }
+                    state[n] = tempRow;
+                    return;
+                }
+
+                if (y < state[n][0]) { // Create Level
+                    newState = [];
+                    for (k = 0; k < state.length; k += 1) {
+                        if (k === n) {
+                            newState[k] = [y, x];
+                            newState[k + 1] = state[k];
+                        } else if (k < n) {
+                            newState[k] = state[k];
+                        } else if (k > n) {
+                            newState[k + 1] = state[k];
+                        }
                     }
 
-                    if (y < state[n][0]) { // Create Level
-                        newState = [];
-                        for (k = 0; k < state.length; k += 1) {
-                            if (k === n) {
-                                newState[k] = [y, x];
-                                newState[k + 1] = state[k];
-                            } else if (k < n) {
-                                newState[k] = state[k];
-                            } else if (k > n) {
-                                newState[k + 1] = state[k];
-                            }
-                        }
-
-                        for (k = 0; k < newState.length; k += 1) {
-                            state[k] = newState[k];
-                        }
-
-                        return;
+                    for (k = 0; k < newState.length; k += 1) {
+                        state[k] = newState[k];
                     }
+
+                    return;
                 }
             }
         }
@@ -1138,7 +1141,7 @@ var GOL = {
                 this.urlParameters = [];
                 hashes = window.location.href.slice(window.location.href.indexOf('?') + 1).split('&');
 
-                for (i = 0; i < hashes.length; i++) {
+                for (i = 0; i < hashes.length; i += 1) {
                     hash = hashes[i].split('=');
                     this.urlParameters.push(hash[0]);
                     this.urlParameters[hash[0]] = hash[1];
@@ -1175,18 +1178,18 @@ var GOL = {
             if (!event) {
                 event = window.event;
             }
-        
-            if (event.pageX || event.pageY)     {
+
+            if (event.pageX || event.pageY) {
                 posx = event.pageX;
                 posy = event.pageY;
-            } else if (event.clientX || event.clientY)  {
+            } else if (event.clientX || event.clientY) {
                 posx = event.clientX + document.body.scrollLeft + document.documentElement.scrollLeft;
                 posy = event.clientY + document.body.scrollTop + document.documentElement.scrollTop;
             }
 
             domObject = event.target || event.srcElement;
 
-            while ( domObject.offsetParent ) {
+            while (domObject.offsetParent) {
                 left += domObject.offsetLeft;
                 top += domObject.offsetTop;
                 domObject = domObject.offsetParent;
@@ -1195,8 +1198,8 @@ var GOL = {
             domObject.pageTop = top;
             domObject.pageLeft = left;
 
-            x = Math.ceil(((posx - domObject.pageLeft)/cellSize) - 1);
-            y = Math.ceil(((posy - domObject.pageTop)/cellSize) - 1);
+            x = Math.ceil(((posx - domObject.pageLeft) / cellSize) - 1);
+            y = Math.ceil(((posy - domObject.pageTop) / cellSize) - 1);
 
             return [x, y];
         }
@@ -1209,6 +1212,7 @@ var GOL = {
  * Init on 'load' event
  */
 GOL.helpers.registerEvent(window, 'load', function () {
+    "use strict";
     GOL.init();
 }, false);
 
