@@ -493,7 +493,7 @@ var GOL = {
              */
             run : function () {
                 "use strict";
-                GOL.element.hint.style.display = 'none';
+                //GOL.element.hint.style.display = 'none';
 
                 GOL.running = !GOL.running;
                 if (GOL.running) {
