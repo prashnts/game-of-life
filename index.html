@@ -12,23 +12,15 @@
   </head>
   <body>
     <div id="wrapper">
-
-      <div id="title">
-        <a href=".">Conway's Game of Life</a>
-      </div>
-
       <canvas id="canvas" width="901" height="433"></canvas>
 
       <div class="cl">&nbsp;</div>
       <div class="box">
         <div class="subtitle">Running Information</div>
         <p class="info"><abbr title="Current Generation">Generation</abbr>: <span id="generation"></span> | <abbr title="Number of live cells">Live cells</abbr>: <span id="livecells"></span> | <abbr title="Execution times: Algorithm / Canvas (Algorithm / Canvas Averages)">Step time</abbr>: <span id="steptime"></span> ms </p>
-
-        <span id="hint">Hint: hit the <strong>Run</strong> button!</span>
       </div>
 
       <div class="box controls">
-        <div class="subtitle">Controls</div>
         <form action="">
           <input type="button" value="Run" id="buttonRun" title="Key: R" />
           <input type="button" value="Step" id="buttonStep" title="Key: S" />
@@ -39,7 +31,6 @@
       </div>
 
       <div class="box layout">
-        <div class="subtitle">Layout</div>
         <form>
          <input type="button" id="buttonTrail" value="Trail"/>
          <input type="button" id="buttonGrid" value="Grid" />
