@@ -316,7 +316,7 @@ var GOL = {
         this.element.steptime = document.getElementById('steptime');
         this.element.livecells = document.getElementById('livecells');
         this.element.messages.layout = document.getElementById('layoutMessages');
-        this.element.hint = document.getElementById('hint');
+        //this.element.hint = document.getElementById('hint');
     },
 
 
