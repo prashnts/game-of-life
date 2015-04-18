@@ -796,7 +796,6 @@ var GOL = {
                 this.drawCell(i, j, false);
             }
         }
-
     },
 
     listLife : {
@@ -1203,8 +1202,191 @@ var GOL = {
 
             return [x, y];
         }
-    }
+    },
 
+    /**
+     * Updated Canvas Prototype
+     * @type {Object}
+     */
+    canvas: {
+        context : null,
+        width : null,
+        height : null,
+        age : null,
+        cellSize : null,
+        cellSpace : null,
+
+
+        /**
+         * init
+         */
+        init : function () {
+            "use strict";
+
+            this.canvas = document.getElementById('canvas');
+            this.context = this.canvas.getContext('2d');
+
+            this.cellSize = GOL.zoom.schemes[GOL.zoom.current].cellSize;
+            this.cellSpace = 1;
+
+            GOL.helpers.registerEvent(this.canvas, 'mousedown', GOL.handlers.canvasMouseDown, false);
+            GOL.helpers.registerEvent(document, 'mouseup', GOL.handlers.canvasMouseUp, false);
+            GOL.helpers.registerEvent(this.canvas, 'mousemove', GOL.handlers.canvasMouseMove, false);
+
+            this.clearWorld();
+        },
+
+
+        /**
+         * clearWorld
+         */
+        clearWorld : function () {
+            "use strict";
+            var i, j;
+
+            // Init ages (Canvas reference)
+            this.age = [];
+            for (i = 0; i < GOL.columns; i += 1) {
+                this.age[i] = [];
+                for (j = 0; j < GOL.rows; j += 1) {
+                    this.age[i][j] = 0; // Dead
+                }
+            }
+        },
+
+
+        /**
+         * drawWorld
+         */
+        drawWorld : function () {
+            "use strict";
+            var i, j;
+
+            // Special no grid case
+            if (GOL.grid.schemes[GOL.grid.current].color === '') {
+                this.setNoGridOn();
+                this.width = this.height = 0;
+            } else {
+                this.setNoGridOff();
+                this.width = this.height = 1;
+            }
+
+            // Dynamic canvas size
+            this.width = this.width + (this.cellSpace * GOL.columns) + (this.cellSize * GOL.columns);
+            this.canvas.setAttribute('width', this.width);
+
+            this.height = this.height + (this.cellSpace * GOL.rows) + (this.cellSize * GOL.rows);
+            this.canvas.getAttribute('height', this.height);
+
+            // Fill background
+            this.context.fillStyle = GOL.grid.schemes[GOL.grid.current].color;
+            this.context.fillRect(0, 0, this.width, this.height);
+
+            for (i = 0; i < GOL.columns; i += 1) {
+                for (j = 0; j < GOL.rows; j += 1) {
+                    if (GOL.listLife.isAlive(i, j)) {
+                        this.drawCell(i, j, true);
+                    } else {
+                        this.drawCell(i, j, false);
+                    }
+                }
+            }
+        },
+
+
+        /**
+         * setNoGridOn
+         */
+        setNoGridOn : function () {
+            "use strict";
+            this.cellSize = GOL.zoom.schemes[GOL.zoom.current].cellSize + 1;
+            this.cellSpace = 0;
+        },
+
+
+        /**
+         * setNoGridOff
+         */
+        setNoGridOff : function () {
+            "use strict";
+            this.cellSize = GOL.zoom.schemes[GOL.zoom.current].cellSize;
+            this.cellSpace = 1;
+        },
+
+
+        /**
+         * drawCell
+         */
+        drawCell : function (i, j, alive) {
+            "use strict";
+
+            if (alive) {
+
+                if (this.age[i][j] > -1) {
+                    this.context.fillStyle = GOL.colors.schemes[GOL.colors.current].alive[this.age[i][j] % GOL.colors.schemes[GOL.colors.current].alive.length];
+                }
+            } else {
+                if (GOL.trail.current && this.age[i][j] < 0) {
+                    this.context.fillStyle = GOL.colors.schemes[GOL.colors.current].trail[(this.age[i][j] * -1) % GOL.colors.schemes[GOL.colors.current].trail.length];
+                } else {
+                    this.context.fillStyle = GOL.colors.schemes[GOL.colors.current].dead;
+                }
+            }
+
+            this.context.fillRect(this.cellSpace + (this.cellSpace * i) + (this.cellSize * i), this.cellSpace + (this.cellSpace * j) + (this.cellSize * j), this.cellSize, this.cellSize);
+        },
+
+
+        /**
+         * switchCell
+         */
+        switchCell : function (i, j) {
+            "use strict";
+            if (GOL.listLife.isAlive(i, j)) {
+                this.changeCelltoDead(i, j);
+                GOL.listLife.removeCell(i, j, GOL.listLife.actualState);
+            } else {
+                this.changeCelltoAlive(i, j);
+                GOL.listLife.addCell(i, j, GOL.listLife.actualState);
+            }
+        },
+
+
+        /**
+         * keepCellAlive
+         */
+        keepCellAlive : function (i, j) {
+            "use strict";
+            if (i >= 0 && i < GOL.columns && j >= 0 && j < GOL.rows) {
+                this.age[i][j] += 1;
+                this.drawCell(i, j, true);
+            }
+        },
+
+
+        /**
+         * changeCelltoAlive
+         */
+        changeCelltoAlive : function (i, j) {
+            "use strict";
+            if (i >= 0 && i < GOL.columns && j >= 0 && j < GOL.rows) {
+                this.age[i][j] = 1;
+                this.drawCell(i, j, true);
+            }
+        },
+
+
+        /**
+         * changeCelltoDead
+         */
+        changeCelltoDead : function (i, j) {
+            "use strict";
+            if (i >= 0 && i < GOL.columns && j >= 0 && j < GOL.rows) {
+                this.age[i][j] = -this.age[i][j]; // Keep trail
+                this.drawCell(i, j, false);
+            }
+        }
+    },
 };
 
 
