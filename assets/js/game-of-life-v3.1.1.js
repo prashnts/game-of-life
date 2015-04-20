@@ -600,12 +600,8 @@ var GOL = {
      */
     loadConfig: function () {
         "use strict";
-        this.autoplay = this.helpers.getUrlParameter('autoplay') === '1' ? true: this.autoplay;
-        this.trail.current = this.helpers.getUrlParameter('trail') === '1' ? true: this.trail.current;
-
-        this.colors.current = 0;
-        this.grid.current = 0;
-        this.zoom.current = 0;
+        this.autoplay = this.helpers.getUrlParameter('autoplay') === '1' ? true : this.autoplay;
+        this.trail.current = this.helpers.getUrlParameter('trail') === '1' ? true : this.trail.current;
 
         this.rows = this.zoom.schemes[this.zoom.current].rows;
         this.columns = this.zoom.schemes[this.zoom.current].columns;
@@ -890,7 +886,7 @@ var GOL = {
              */
             trail: function () {
                 "use strict";
-                GOL.element.messages.layout.innerHTML = GOL.trail.current ? 'Trail is Off': 'Trail is On';
+                GOL.element.messages.layout.innerHTML = GOL.trail.current ? 'Trail is Off' : 'Trail is On';
                 GOL.trail.current = !GOL.trail.current;
                 if (GOL.running) {
                     GOL.trail.schedule = true;
@@ -949,10 +945,10 @@ var GOL = {
                 cellState = String(cellState.substring(0, cellState.length - 1));
 
                 if (cellState.length !== 0) {
-                    url = (window.location.href.indexOf('?') === -1) ? window.location.href: window.location.href.slice(0, window.location.href.indexOf('?'));
+                    url = (window.location.href.indexOf('?') === -1) ? window.location.href : window.location.href.slice(0, window.location.href.indexOf('?'));
 
                     params = '?autoplay=0' +
-                        '&trail=' + (GOL.trail.current ? '1': '0') +
+                        '&trail=' + (GOL.trail.current ? '1' : '0') +
                         '&grid=' + (GOL.grid.current + 1) +
                         '&colors=' + (GOL.colors.current + 1) +
                         '&zoom=' + (GOL.zoom.current + 1) +
