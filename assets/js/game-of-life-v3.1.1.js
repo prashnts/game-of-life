@@ -618,7 +618,7 @@ var GOL = {
     /**
      * Marked for update.
      */
-    canvas: {
+    canvas_deprecated: {
         context : null,
         width : null,
         height : null,
@@ -1386,7 +1386,7 @@ var GOL = {
                 this.drawCell(i, j, false);
             }
         }
-    },
+    }
 };
 
 
@@ -1398,35 +1398,3 @@ GOL.helpers.registerEvent(window, 'load', function () {
     GOL.init();
 }, false);
 
-var Point  = Isomer.Point;
-var Path   = Isomer.Path;
-var Shape  = Isomer.Shape;
-var Vector = Isomer.Vector;
-var Color  = Isomer.Color;
-
-var iso = new Isomer(document.getElementById("canvas2"));
-
-var red = new Color(160, 60, 50);
-var blue = new Color(50, 60, 160);
-
-iso.add(Shape.Prism(new Point(4, 0, 0)));
-iso.add(Shape.Prism(new Point(4, 40, 0)));
-iso.add(Shape.Prism(new Point(400, 0, 0)));
-iso.add(Shape.Prism(new Point(0, 1, 0)));
-iso.add(Shape.Prism(new Point(1, 0, 0)));
-iso.add(Shape.Prism(new Point(3, 3, 3)));
-var x, y, len = 1000;
-for (x = -1 * len; x < len; x += 1) {
-    iso.add(new Path([
-        new Point(x, -1 * len, 0),
-        new Point(x, len, 0),
-        new Point(x, 0, 0)
-    ]), new Color(50, 60, 160));
-}
-for (y = -1 * len; y < len; y += 1) {
-    iso.add(new Path([
-        new Point(-1 * len, y, 0),
-        new Point(len, y, 0),
-        new Point(0, y, 0)
-    ]), new Color(50, 60, 160));
-}
