@@ -626,16 +626,6 @@ var GOL = {
             }
 
             state = jsonParse(decodeURI(s));
-
-            for (i = 0; i < state.length; i += 1) {
-                for (y in state[i]) {
-                    if (state[i].hasOwnProperty(y)) {
-                        for (j = 0; j < state[i][y].length; j += 1) {
-                            this.listLife.addCell(state[i][y][j], parseInt(y, 10), this.listLife.actualState);
-                        }
-                    }
-                }
-            }
         }
     },
 
@@ -1177,7 +1167,6 @@ var GOL = {
                 this.drawCell(i, j, false);
             }
         }
-
     },
 
     listLife: {
@@ -1500,6 +1489,21 @@ var GOL = {
      *
      */
     helpers: {
+
+        readStateIntoListLife: function (state) {
+            "use strict";
+            var i, j, y;
+            for (i = 0; i < state.length; i += 1) {
+                for (y in state[i]) {
+                    if (state[i].hasOwnProperty(y)) {
+                        for (j = 0; j < state[i][y].length; j += 1) {
+                            GOL.listLife.addCell(state[i][y][j], parseInt(y, 10), GOL.listLife.actualState);
+                        }
+                    }
+                }
+            }
+        },
+
         urlParameters: null, // Cache
 
         /**
@@ -1507,7 +1511,7 @@ var GOL = {
          */
         random: function (min, max) {
             "use strict";
-            return min <= max ? min + Math.round(Math.random() * (max - min)): null;
+            return min <= max ? min + Math.round(Math.random() * (max - min)) : null;
         },
 
 
