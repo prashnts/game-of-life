@@ -923,41 +923,6 @@ var GOL = {
                 } else {
                     GOL.canvas.drawWorld(); // Force complete redraw
                 }
-            },
-
-
-            /**
-             * Button Handler - Export State
-             */
-            export_state: function () {
-                "use strict";
-                var i, j, url = '', cellState = '', params = '';
-
-                for (i = 0; i < GOL.listLife.actualState.length; i += 1) {
-                    cellState += '{"' + GOL.listLife.actualState[i][0] + '": [';
-
-                    for (j = 1; j < GOL.listLife.actualState[i].length; j += 1) {
-                        cellState += GOL.listLife.actualState[i][j] + ',';
-                    }
-                    cellState = cellState.substring(0, cellState.length - 1) + ']},';
-                }
-
-                cellState = String(cellState.substring(0, cellState.length - 1));
-
-                if (cellState.length !== 0) {
-                    url = (window.location.href.indexOf('?') === -1) ? window.location.href : window.location.href.slice(0, window.location.href.indexOf('?'));
-
-                    params = '?autoplay=0' +
-                        '&trail=' + (GOL.trail.current ? '1' : '0') +
-                        '&grid=' + (GOL.grid.current + 1) +
-                        '&colors=' + (GOL.colors.current + 1) +
-                        '&zoom=' + (GOL.zoom.current + 1) +
-                        '&s=[' + cellState + ']';
-
-                    document.getElementById('exportUrlLink').href = params;
-                    document.getElementById('exportTinyUrlLink').href = 'http://tinyurl.com/api-create.php?url=' + url + params;
-                    document.getElementById('exportUrl').style.display = 'inline';
-                }
             }
         }
     },
