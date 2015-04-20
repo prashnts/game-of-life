@@ -204,7 +204,6 @@ var GOL = {
         this.listLife.nextGeneration();
     },
 
-
     /**
      * Clean up actual state and prepare a new run
      */
@@ -232,6 +231,7 @@ var GOL = {
 
         if (this.autoplay) { // Next Flow
             this.autoplay = false;
+            console.log("LOL");
             this.handlers.buttons.run();
         }
     },
@@ -247,7 +247,6 @@ var GOL = {
         this.element.steptime = document.getElementById('steptime');
         this.element.livecells = document.getElementById('livecells');
         this.element.messages.layout = document.getElementById('layoutMessages');
-        //this.element.hint = document.getElementById('hint');
     },
 
 
@@ -257,20 +256,10 @@ var GOL = {
      */
     registerEvents : function () {
         "use strict";
-
-        // Keyboard Events
-        this.helpers.registerEvent(document.body, 'keyup', this.handlers.keyboard, false);
-
-        // Controls
         this.helpers.registerEvent(document.getElementById('buttonRun'), 'click', this.handlers.buttons.run, false);
         this.helpers.registerEvent(document.getElementById('buttonStep'), 'click', this.handlers.buttons.step, false);
         this.helpers.registerEvent(document.getElementById('buttonClear'), 'click', this.handlers.buttons.clear, false);
         this.helpers.registerEvent(document.getElementById('buttonExport'), 'click', this.handlers.buttons.export_state, false);
-
-        // Layout
-        this.helpers.registerEvent(document.getElementById('buttonTrail'), 'click', this.handlers.buttons.trail, false);
-        this.helpers.registerEvent(document.getElementById('buttonGrid'), 'click', this.handlers.buttons.grid, false);
-        this.helpers.registerEvent(document.getElementById('buttonColors'), 'click', this.handlers.buttons.colors, false);
     },
 
 
@@ -309,7 +298,7 @@ var GOL = {
 
         guiTime = (new Date()) - guiTime;
 
-        // Pos-run updates
+        // Post-run updates
 
         // Clear Trail
         if (this.trail.schedule) {
@@ -541,190 +530,6 @@ var GOL = {
                     document.getElementById('exportTinyUrlLink').href = 'http://tinyurl.com/api-create.php?url=' + url + params;
                     document.getElementById('exportUrl').style.display = 'inline';
                 }
-            }
-        }
-    },
-
-
-    /**
-     * Marked for update.
-     */
-    canvas_deprecated: {
-        context : null,
-        width : null,
-        height : null,
-        age : null,
-        cellSize : null,
-        cellSpace : null,
-
-
-        /**
-         * init
-         */
-        init : function () {
-            "use strict";
-
-            this.canvas = document.getElementById('canvas');
-            this.context = this.canvas.getContext('2d');
-
-            this.cellSize = GOL.zoom.schemes[GOL.zoom.current].cellSize;
-            this.cellSpace = 1;
-
-            GOL.helpers.registerEvent(this.canvas, 'mousedown', GOL.handlers.canvasMouseDown, false);
-            GOL.helpers.registerEvent(document, 'mouseup', GOL.handlers.canvasMouseUp, false);
-            GOL.helpers.registerEvent(this.canvas, 'mousemove', GOL.handlers.canvasMouseMove, false);
-
-            this.clearWorld();
-        },
-
-
-        /**
-         * clearWorld
-         */
-        clearWorld : function () {
-            "use strict";
-            var i, j;
-
-            // Init ages (Canvas reference)
-            this.age = [];
-            for (i = 0; i < GOL.columns; i += 1) {
-                this.age[i] = [];
-                for (j = 0; j < GOL.rows; j += 1) {
-                    this.age[i][j] = 0; // Dead
-                }
-            }
-        },
-
-
-        /**
-         * drawWorld
-         */
-        drawWorld : function () {
-            "use strict";
-            var i, j;
-
-            // Special no grid case
-            if (GOL.grid.schemes[GOL.grid.current].color === '') {
-                this.setNoGridOn();
-                this.width = this.height = 0;
-            } else {
-                this.setNoGridOff();
-                this.width = this.height = 1;
-            }
-
-            // Dynamic canvas size
-            this.width = this.width + (this.cellSpace * GOL.columns) + (this.cellSize * GOL.columns);
-            this.canvas.setAttribute('width', this.width);
-
-            this.height = this.height + (this.cellSpace * GOL.rows) + (this.cellSize * GOL.rows);
-            this.canvas.getAttribute('height', this.height);
-
-            // Fill background
-            this.context.fillStyle = GOL.grid.schemes[GOL.grid.current].color;
-            this.context.fillRect(0, 0, this.width, this.height);
-
-            for (i = 0; i < GOL.columns; i += 1) {
-                for (j = 0; j < GOL.rows; j += 1) {
-                    if (GOL.listLife.isAlive(i, j)) {
-                        this.drawCell(i, j, true);
-                    } else {
-                        this.drawCell(i, j, false);
-                    }
-                }
-            }
-        },
-
-
-        /**
-         * setNoGridOn
-         */
-        setNoGridOn : function () {
-            "use strict";
-            this.cellSize = GOL.zoom.schemes[GOL.zoom.current].cellSize + 1;
-            this.cellSpace = 0;
-        },
-
-
-        /**
-         * setNoGridOff
-         */
-        setNoGridOff : function () {
-            "use strict";
-            this.cellSize = GOL.zoom.schemes[GOL.zoom.current].cellSize;
-            this.cellSpace = 1;
-        },
-
-
-        /**
-         * drawCell
-         */
-        drawCell : function (i, j, alive) {
-            "use strict";
-
-            if (alive) {
-
-                if (this.age[i][j] > -1) {
-                    this.context.fillStyle = GOL.colors.schemes[GOL.colors.current].alive[this.age[i][j] % GOL.colors.schemes[GOL.colors.current].alive.length];
-                }
-            } else {
-                if (GOL.trail.current && this.age[i][j] < 0) {
-                    this.context.fillStyle = GOL.colors.schemes[GOL.colors.current].trail[(this.age[i][j] * -1) % GOL.colors.schemes[GOL.colors.current].trail.length];
-                } else {
-                    this.context.fillStyle = GOL.colors.schemes[GOL.colors.current].dead;
-                }
-            }
-
-            this.context.fillRect(this.cellSpace + (this.cellSpace * i) + (this.cellSize * i), this.cellSpace + (this.cellSpace * j) + (this.cellSize * j), this.cellSize, this.cellSize);
-        },
-
-
-        /**
-         * switchCell
-         */
-        switchCell : function (i, j) {
-            "use strict";
-            if (GOL.listLife.isAlive(i, j)) {
-                this.changeCelltoDead(i, j);
-                GOL.listLife.removeCell(i, j, GOL.listLife.actualState);
-            } else {
-                this.changeCelltoAlive(i, j);
-                GOL.listLife.addCell(i, j, GOL.listLife.actualState);
-            }
-        },
-
-
-        /**
-         * keepCellAlive
-         */
-        keepCellAlive : function (i, j) {
-            "use strict";
-            if (i >= 0 && i < GOL.columns && j >= 0 && j < GOL.rows) {
-                this.age[i][j] += 1;
-                this.drawCell(i, j, true);
-            }
-        },
-
-
-        /**
-         * changeCelltoAlive
-         */
-        changeCelltoAlive : function (i, j) {
-            "use strict";
-            if (i >= 0 && i < GOL.columns && j >= 0 && j < GOL.rows) {
-                this.age[i][j] = 1;
-                this.drawCell(i, j, true);
-            }
-        },
-
-
-        /**
-         * changeCelltoDead
-         */
-        changeCelltoDead : function (i, j) {
-            "use strict";
-            if (i >= 0 && i < GOL.columns && j >= 0 && j < GOL.rows) {
-                this.age[i][j] = -this.age[i][j]; // Keep trail
-                this.drawCell(i, j, false);
             }
         }
     },
@@ -1167,7 +972,6 @@ var GOL = {
             this.clearWorld();
         },
 
-
         /**
          * clearWorld
          */
@@ -1328,36 +1132,3 @@ GOL.helpers.registerEvent(window, 'load', function () {
     "use strict";
     GOL.init();
 }, false);
-
-var Point  = Isomer.Point;
-var Path   = Isomer.Path;
-var Shape  = Isomer.Shape;
-var Vector = Isomer.Vector;
-var Color  = Isomer.Color;
-
-var iso = new Isomer(document.getElementById("canvas2"));
-
-var red = new Color(160, 60, 50);
-var blue = new Color(50, 60, 160);
-
-iso.add(Shape.Prism(new Point(4, 0, 0)));
-iso.add(Shape.Prism(new Point(4, 40, 0)));
-iso.add(Shape.Prism(new Point(400, 0, 0)));
-iso.add(Shape.Prism(new Point(0, 1, 0)));
-iso.add(Shape.Prism(new Point(1, 0, 0)));
-iso.add(Shape.Prism(new Point(3, 3, 3)));
-var x, y, len = 1000;
-for (x = -1 * len; x < len; x += 1) {
-    iso.add(new Path([
-        new Point(x, -1 * len, 0),
-        new Point(x, len, 0),
-        new Point(x, 0, 0)
-    ]), new Color(50, 60, 160));
-}
-for (y = -1 * len; y < len; y += 1) {
-    iso.add(new Path([
-        new Point(-1 * len, y, 0),
-        new Point(len, y, 0),
-        new Point(0, y, 0)
-    ]), new Color(50, 60, 160));
-}
