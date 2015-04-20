@@ -618,7 +618,7 @@ var GOL = {
     /**
      * Marked for update.
      */
-    canvas_deprecated: {
+    canvas: {
         context : null,
         width : null,
         height : null,
@@ -1386,7 +1386,7 @@ var GOL = {
                 this.drawCell(i, j, false);
             }
         }
-    }
+    },
 };
 
 
