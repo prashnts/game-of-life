@@ -1,4 +1,4 @@
-/*global alert: false, clearInterval: false, console: false, clearTimeout: false, document: false, event: false, frames: false, history: false, Image: false, jsonParse: false, location: false, name: false, navigator: false, Option: false, parent: false, screen: false, setInterval: false, setTimeout: false, window: false, XMLHttpRequest: false */
+/*global alert: false, clearInterval: false, console: false, clearTimeout: false, document: false, event: false, frames: false, history: false, Image: false, Isomer: false, jsonParse: false, location: false, name: false, navigator: false, Option: false, parent: false, screen: false, setInterval: false, setTimeout: false, window: false, XMLHttpRequest: false */
 
 /**
  * Game of Life - JS & CSS
@@ -180,8 +180,8 @@ var GOL = {
         "use strict";
         try {
             this.listLife.init();   // Reset/init algorithm
-            this.loadConfig();      // Load config from URL (autoplay, colors, zoom, ...)
-            this.loadState();       // Load state from URL
+            //this.loadConfig();      // Load config from URL (autoplay, colors, zoom, ...)
+            //this.loadState();       // Load state from URL
             this.keepDOMElements(); // Keep DOM References (getElementsById)
             this.canvas.init();     // Init canvas GUI
             this.registerEvents();  // Register event handlers
@@ -829,12 +829,12 @@ var GOL = {
                     // Possible dead neighbours
                     deadNeighbours = [
                         [x - 1, y - 1, 1],
-                        [x, y - 1, 1],
+                        [x,     y - 1, 1],
                         [x + 1, y - 1, 1],
-                        [x - 1, y, 1],
-                        [x + 1, y, 1],
+                        [x - 1, y,     1],
+                        [x + 1, y,     1],
                         [x - 1, y + 1, 1],
-                        [x, y + 1, 1],
+                        [x,     y + 1, 1],
                         [x + 1, y + 1, 1]
                     ];
 
@@ -1398,3 +1398,35 @@ GOL.helpers.registerEvent(window, 'load', function () {
     GOL.init();
 }, false);
 
+var Point  = Isomer.Point;
+var Path   = Isomer.Path;
+var Shape  = Isomer.Shape;
+var Vector = Isomer.Vector;
+var Color  = Isomer.Color;
+
+var iso = new Isomer(document.getElementById("canvas2"));
+
+var red = new Color(160, 60, 50);
+var blue = new Color(50, 60, 160);
+
+iso.add(Shape.Prism(new Point(4, 0, 0)));
+iso.add(Shape.Prism(new Point(4, 40, 0)));
+iso.add(Shape.Prism(new Point(400, 0, 0)));
+iso.add(Shape.Prism(new Point(0, 1, 0)));
+iso.add(Shape.Prism(new Point(1, 0, 0)));
+iso.add(Shape.Prism(new Point(3, 3, 3)));
+var x, y, len = 1000;
+for (x = -1 * len; x < len; x += 1) {
+    iso.add(new Path([
+        new Point(x, -1 * len, 0),
+        new Point(x, len, 0),
+        new Point(x, 0, 0)
+    ]), new Color(50, 60, 160));
+}
+for (y = -1 * len; y < len; y += 1) {
+    iso.add(new Path([
+        new Point(-1 * len, y, 0),
+        new Point(len, y, 0),
+        new Point(0, y, 0)
+    ]), new Color(50, 60, 160));
+}
