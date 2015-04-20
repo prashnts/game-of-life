@@ -583,6 +583,7 @@ var GOL = {
             this.listLife.init();   // Reset/init algorithm
             this.loadConfig();      // Load config from URL (autoplay, colors, zoom, ...)
             //this.loadState();       // Load state from URL
+            this.randomState();
             this.keepDOMElements(); // Keep DOM References (getElementsById)
             this.canvas.init();     // Init canvas GUI
             this.registerEvents();  // Register event handlers
@@ -609,26 +610,6 @@ var GOL = {
         this.rows = this.zoom.schemes[this.zoom.current].rows;
         this.columns = this.zoom.schemes[this.zoom.current].columns;
     },
-
-
-    /**
-     * Load world state from URL parameter
-     */
-    loadState: function () {
-        "use strict";
-        var state, i, j, y, s = this.helpers.getUrlParameter('s');
-
-        if (s === 'random') {
-            this.randomState();
-        } else {
-            if (s === undefined) {
-                s = this.initialState;
-            }
-
-            state = jsonParse(decodeURI(s));
-        }
-    },
-
 
     /**
      * Create a random pattern
