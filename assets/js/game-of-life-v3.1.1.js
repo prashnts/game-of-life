@@ -9,102 +9,83 @@
 
 var GOL = {
 
-    columns : 0,
-    rows : 0,
+    columns: 0,
+    rows: 0,
 
     waitTime: 0,
-    generation : 0,
+    generation: 0,
 
-    running : false,
-    autoplay : false,
+    running: false,
+    autoplay: false,
 
-    clear : {
-        schedule : false
+    clear: {
+        schedule: false
     },
 
-    times : {
-        algorithm : 0,
-        gui : 0
+    times: {
+        algorithm: 0,
+        gui: 0
     },
 
-    element : {
-        generation : null,
-        steptime : null,
-        livecells : null,
-        hint : null,
-        messages : {
-            layout : null
+    element: {
+        generation: null,
+        steptime: null,
+        livecells: null,
+        hint: null,
+        messages: {
+            layout: null
         }
     },
 
     // Initial state
-    initialState : '[{"39":[110]},{"40":[112]},{"41":[109,110,113,114,115]}]',
+    initialState: '[{"39":[110]},{"40":[112]},{"41":[109,110,113,114,115]}]',
 
     // Trail state
-    trail : {
+    trail: {
         current: true,
-        schedule : false
+        schedule: false
     },
 
 
     // Grid style
-    grid : {
-        current : 0,
+    grid: {
+        current: 0,
 
-        schemes : [
+        schemes: [
             {
-                color : '#F3F3F3'
+                color: '#F3F3F3'
             },
-            {
-                color : '#FFFFFF'
-            },
-            {
-                color : '#666666'
-            },
-            {
-                color : '' // Special case: 0px grid
-            }
         ]
     },
 
 
     // Zoom level
-    zoom : {
-        current : 0,
-        schedule : false,
+    zoom: {
+        current: 0,
+        schedule: false,
 
-        schemes : [
+        schemes: [
             {
-                columns : 180,
-                rows : 86,
-                cellSize : 4
-            },
-            {
-                columns : 300,
-                rows : 144,
-                cellSize : 2
-            },
-            {
-                columns : 450,
-                rows : 216,
-                cellSize : 1
+                columns: 180,
+                rows: 86,
+                cellSize: 4
             }
         ]
     },
 
 
     // Cell colors
-    colors : {
-        current : 0,
-        schedule : false,
+    colors: {
+        current: 0,
+        schedule: false,
 
-        schemes : [
+        schemes: [
             {
-                dead : '#FFFFFF',
-                trail : [
+                dead: '#FFFFFF',
+                trail: [
                     '#B5ECA2'
                 ],
-                alive : [
+                alive: [
                     '#9898FF',
                     '#8585FF',
                     '#7272FF',
@@ -121,67 +102,27 @@ var GOL = {
                     '#5F5FFF',
                     '#7272FF',
                     '#8585FF'
-                ]
-            },
-            {
-                dead : '#FFFFFF',
-                trail : [
-                    '#EE82EE',
-                    '#FF0000',
-                    '#FF7F00',
-                    '#FFFF00',
-                    '#008000 ',
-                    '#0000FF',
-                    '#4B0082'
-                ],
-                alive : [
-                    '#FF0000',
-                    '#FF7F00',
-                    '#FFFF00',
-                    '#008000',
-                    '#0000FF',
-                    '#4B0082',
-                    '#EE82EE'
-                ]
-            },
-            {
-                dead : '#FFFFFF',
-                trail : [
-                    '#9898FF',
-                    '#8585FF',
-                    '#7272FF',
-                    '#5F5FFF',
-                    '#4C4CFF',
-                    '#3939FF',
-                    '#2626FF',
-                    '#1313FF',
-                    '#0000FF',
-                    '#1313FF',
-                    '#2626FF',
-                    '#3939FF',
-                    '#4C4CFF',
-                    '#5F5FFF',
-                    '#7272FF',
-                    '#8585FF'
-                ],
-                alive : [
-                    '#000000'
                 ]
             }
 
         ]
     },
 
+    states: {
+        //still_life: ,
+        //glider_gun: ,
+        //acorn: 
+    },
 
     /**
      * On Load Event
      */
-    init : function () {
+    init: function () {
         "use strict";
         try {
             this.listLife.init();   // Reset/init algorithm
             this.loadConfig();      // Load config from URL (autoplay, colors, zoom, ...)
-            this.loadState();       // Load state from URL
+            //this.loadState();       // Load state from URL
             this.keepDOMElements(); // Keep DOM References (getElementsById)
             this.canvas.init();     // Init canvas GUI
             this.registerEvents();  // Register event handlers
@@ -196,34 +137,14 @@ var GOL = {
     /**
      * Load config from URL
      */
-    loadConfig : function () {
+    loadConfig: function () {
         "use strict";
-        var colors, grid, zoom;
+        this.autoplay = this.helpers.getUrlParameter('autoplay') === '1' ? true: this.autoplay;
+        this.trail.current = this.helpers.getUrlParameter('trail') === '1' ? true: this.trail.current;
 
-        this.autoplay = this.helpers.getUrlParameter('autoplay') === '1' ? true : this.autoplay;
-        this.trail.current = this.helpers.getUrlParameter('trail') === '1' ? true : this.trail.current;
-
-        // Initial color config
-        colors = parseInt(this.helpers.getUrlParameter('colors'), 10);
-        if (isNaN(colors) || colors < 1 || colors > GOL.colors.schemes.length) {
-            colors = 1;
-        }
-
-        // Initial grid config
-        grid = parseInt(this.helpers.getUrlParameter('grid'), 10);
-        if (isNaN(grid) || grid < 1 || grid > GOL.grid.schemes.length) {
-            grid = 1;
-        }
-
-        // Initial zoom config
-        zoom = parseInt(this.helpers.getUrlParameter('zoom'), 10);
-        if (isNaN(zoom) || zoom < 1 || zoom > GOL.zoom.schemes.length) {
-            zoom = 1;
-        }
-
-        this.colors.current = colors - 1;
-        this.grid.current = grid - 1;
-        this.zoom.current = zoom - 1;
+        this.colors.current = 0;
+        this.grid.current = 0;
+        this.zoom.current = 0;
 
         this.rows = this.zoom.schemes[this.zoom.current].rows;
         this.columns = this.zoom.schemes[this.zoom.current].columns;
@@ -233,7 +154,7 @@ var GOL = {
     /**
      * Load world state from URL parameter
      */
-    loadState : function () {
+    loadState: function () {
         "use strict";
         var state, i, j, y, s = this.helpers.getUrlParameter('s');
 
@@ -262,7 +183,7 @@ var GOL = {
     /**
      * Create a random pattern
      */
-    randomState : function () {
+    randomState: function () {
         "use strict";
         var i, liveCells = (this.rows * this.columns) * 0.12;
 
@@ -277,7 +198,7 @@ var GOL = {
     /**
      * Clean up actual state and prepare a new run
      */
-    cleanUp : function () {
+    cleanUp: function () {
         "use strict";
         this.listLife.init(); // Reset/init algorithm
         this.prepare();
@@ -287,7 +208,7 @@ var GOL = {
     /**
      * Prepare DOM elements and Canvas for a new run
      */
-    prepare : function () {
+    prepare: function () {
         "use strict";
         this.generation = this.times.algorithm = this.times.gui = 0;
         this.mouseDown = this.clear.schedule = false;
@@ -310,7 +231,7 @@ var GOL = {
      * keepDOMElements
      * Save DOM references for this session (one time execution)
      */
-    keepDOMElements : function () {
+    keepDOMElements: function () {
         "use strict";
         this.element.generation = document.getElementById('generation');
         this.element.steptime = document.getElementById('steptime');
@@ -324,7 +245,7 @@ var GOL = {
      * registerEvents
      * Register event handlers for this session (one time execution)
      */
-    registerEvents : function () {
+    registerEvents: function () {
         "use strict";
 
         // Keyboard Events
@@ -346,7 +267,7 @@ var GOL = {
     /**
      * Run Next Step
      */
-    nextStep : function () {
+    nextStep: function () {
         "use strict";
         var i, x, y, r, liveCellNumber, algorithmTime, guiTime;
 
@@ -424,17 +345,17 @@ var GOL = {
     /**
      * Event Handerls
      */
-    handlers : {
+    handlers: {
 
-        mouseDown : false,
-        lastX : 0,
-        lastY : 0,
+        mouseDown: false,
+        lastX: 0,
+        lastY: 0,
 
 
         /**
          *
          */
-        canvasMouseDown : function (event) {
+        canvasMouseDown: function (event) {
             "use strict";
             var position = GOL.helpers.mousePosition(event);
             GOL.canvas.switchCell(position[0], position[1]);
@@ -447,7 +368,7 @@ var GOL = {
         /**
          *
          */
-        canvasMouseUp : function () {
+        canvasMouseUp: function () {
             "use strict";
             GOL.handlers.mouseDown = false;
         },
@@ -456,7 +377,7 @@ var GOL = {
         /**
          *
          */
-        canvasMouseMove : function (event) {
+        canvasMouseMove: function (event) {
             "use strict";
             if (GOL.handlers.mouseDown) {
                 var position = GOL.helpers.mousePosition(event);
@@ -472,7 +393,7 @@ var GOL = {
         /**
          *
          */
-        keyboard : function (e) {
+        keyboard: function (e) {
             "use strict";
             var event = e;
             if (!event) {
@@ -489,11 +410,11 @@ var GOL = {
         },
 
 
-        buttons : {
+        buttons: {
             /**
              * Button Handler - Run
              */
-            run : function () {
+            run: function () {
                 "use strict";
                 //GOL.element.hint.style.display = 'none';
 
@@ -510,7 +431,7 @@ var GOL = {
             /**
              * Button Handler - Next Step - One Step only
              */
-            step : function () {
+            step: function () {
                 "use strict";
                 if (!GOL.running) {
                     GOL.nextStep();
@@ -521,7 +442,7 @@ var GOL = {
             /**
              * Button Handler - Clear World
              */
-            clear : function () {
+            clear: function () {
                 "use strict";
                 if (GOL.running) {
                     GOL.clear.schedule = true;
@@ -536,9 +457,9 @@ var GOL = {
             /**
              * Button Handler - Remove/Add Trail
              */
-            trail : function () {
+            trail: function () {
                 "use strict";
-                GOL.element.messages.layout.innerHTML = GOL.trail.current ? 'Trail is Off' : 'Trail is On';
+                GOL.element.messages.layout.innerHTML = GOL.trail.current ? 'Trail is Off': 'Trail is On';
                 GOL.trail.current = !GOL.trail.current;
                 if (GOL.running) {
                     GOL.trail.schedule = true;
@@ -551,7 +472,7 @@ var GOL = {
             /**
              *
              */
-            colors : function () {
+            colors: function () {
                 "use strict";
                 GOL.colors.current = (GOL.colors.current + 1) % GOL.colors.schemes.length;
                 GOL.element.messages.layout.innerHTML = 'Color Scheme #' + (GOL.colors.current + 1);
@@ -566,7 +487,7 @@ var GOL = {
             /**
              *
              */
-            grid : function () {
+            grid: function () {
                 "use strict";
                 GOL.grid.current = (GOL.grid.current + 1) % GOL.grid.schemes.length;
                 GOL.element.messages.layout.innerHTML = 'Grid Scheme #' + (GOL.grid.current + 1);
@@ -581,7 +502,7 @@ var GOL = {
             /**
              * Button Handler - Export State
              */
-            export_state : function () {
+            export_state: function () {
                 "use strict";
                 var i, j, url = '', cellState = '', params = '';
 
@@ -597,10 +518,10 @@ var GOL = {
                 cellState = String(cellState.substring(0, cellState.length - 1));
 
                 if (cellState.length !== 0) {
-                    url = (window.location.href.indexOf('?') === -1) ? window.location.href : window.location.href.slice(0, window.location.href.indexOf('?'));
+                    url = (window.location.href.indexOf('?') === -1) ? window.location.href: window.location.href.slice(0, window.location.href.indexOf('?'));
 
                     params = '?autoplay=0' +
-                        '&trail=' + (GOL.trail.current ? '1' : '0') +
+                        '&trail=' + (GOL.trail.current ? '1': '0') +
                         '&grid=' + (GOL.grid.current + 1) +
                         '&colors=' + (GOL.colors.current + 1) +
                         '&zoom=' + (GOL.zoom.current + 1) +
@@ -619,18 +540,18 @@ var GOL = {
      * Marked for update.
      */
     canvas: {
-        context : null,
-        width : null,
-        height : null,
-        age : null,
-        cellSize : null,
-        cellSpace : null,
+        context: null,
+        width: null,
+        height: null,
+        age: null,
+        cellSize: null,
+        cellSpace: null,
 
 
         /**
          * init
          */
-        init : function () {
+        init: function () {
             "use strict";
 
             this.canvas = document.getElementById('canvas');
@@ -650,7 +571,7 @@ var GOL = {
         /**
          * clearWorld
          */
-        clearWorld : function () {
+        clearWorld: function () {
             "use strict";
             var i, j;
 
@@ -668,7 +589,7 @@ var GOL = {
         /**
          * drawWorld
          */
-        drawWorld : function () {
+        drawWorld: function () {
             "use strict";
             var i, j;
 
@@ -707,7 +628,7 @@ var GOL = {
         /**
          * setNoGridOn
          */
-        setNoGridOn : function () {
+        setNoGridOn: function () {
             "use strict";
             this.cellSize = GOL.zoom.schemes[GOL.zoom.current].cellSize + 1;
             this.cellSpace = 0;
@@ -717,7 +638,7 @@ var GOL = {
         /**
          * setNoGridOff
          */
-        setNoGridOff : function () {
+        setNoGridOff: function () {
             "use strict";
             this.cellSize = GOL.zoom.schemes[GOL.zoom.current].cellSize;
             this.cellSpace = 1;
@@ -727,7 +648,7 @@ var GOL = {
         /**
          * drawCell
          */
-        drawCell : function (i, j, alive) {
+        drawCell: function (i, j, alive) {
             "use strict";
 
             if (alive) {
@@ -750,7 +671,7 @@ var GOL = {
         /**
          * switchCell
          */
-        switchCell : function (i, j) {
+        switchCell: function (i, j) {
             "use strict";
             if (GOL.listLife.isAlive(i, j)) {
                 this.changeCelltoDead(i, j);
@@ -765,7 +686,7 @@ var GOL = {
         /**
          * keepCellAlive
          */
-        keepCellAlive : function (i, j) {
+        keepCellAlive: function (i, j) {
             "use strict";
             if (i >= 0 && i < GOL.columns && j >= 0 && j < GOL.rows) {
                 this.age[i][j] += 1;
@@ -777,7 +698,7 @@ var GOL = {
         /**
          * changeCelltoAlive
          */
-        changeCelltoAlive : function (i, j) {
+        changeCelltoAlive: function (i, j) {
             "use strict";
             if (i >= 0 && i < GOL.columns && j >= 0 && j < GOL.rows) {
                 this.age[i][j] = 1;
@@ -789,7 +710,7 @@ var GOL = {
         /**
          * changeCelltoDead
          */
-        changeCelltoDead : function (i, j) {
+        changeCelltoDead: function (i, j) {
             "use strict";
             if (i >= 0 && i < GOL.columns && j >= 0 && j < GOL.rows) {
                 this.age[i][j] = -this.age[i][j]; // Keep trail
@@ -799,22 +720,22 @@ var GOL = {
 
     },
 
-    listLife : {
+    listLife: {
 
-        actualState : [],
-        redrawList : [],
+        actualState: [],
+        redrawList: [],
 
 
         /**
          *
          */
-        init : function () {
+        init: function () {
             "use strict";
             this.actualState = [];
         },
 
 
-        nextGeneration : function () {
+        nextGeneration: function () {
             "use strict";
             var x, y, i, j, m, key, t1, t2, alive = 0, neighbours, deadNeighbours, allDeadNeighbours = {}, newState = [];
             this.redrawList = [];
@@ -883,14 +804,14 @@ var GOL = {
             return alive;
         },
 
-        topPointer : 1,
-        middlePointer : 1,
-        bottomPointer : 1,
+        topPointer: 1,
+        middlePointer: 1,
+        bottomPointer: 1,
 
         /**
          *
          */
-        getNeighboursFromAlive : function (x, y, i, possibleNeighboursList) {
+        getNeighboursFromAlive: function (x, y, i, possibleNeighboursList) {
             "use strict";
             var neighbours = 0, k;
 
@@ -998,7 +919,7 @@ var GOL = {
         /**
          *
          */
-        isAlive : function (x, y) {
+        isAlive: function (x, y) {
             "use strict";
             var i, j;
 
@@ -1018,7 +939,7 @@ var GOL = {
         /**
          *
          */
-        removeCell : function (x, y, state) {
+        removeCell: function (x, y, state) {
             "use strict";
             var i, j;
 
@@ -1042,7 +963,7 @@ var GOL = {
         /**
          *
          */
-        addCell : function (x, y, state) {
+        addCell: function (x, y, state) {
             "use strict";
             if (state.length === 0) {
                 state.push([y, x]);
@@ -1118,22 +1039,22 @@ var GOL = {
     /**
      *
      */
-    helpers : {
-        urlParameters : null, // Cache
+    helpers: {
+        urlParameters: null, // Cache
 
         /**
          * Return a random integer from [min, max]
          */
-        random : function (min, max) {
+        random: function (min, max) {
             "use strict";
-            return min <= max ? min + Math.round(Math.random() * (max - min)) : null;
+            return min <= max ? min + Math.round(Math.random() * (max - min)): null;
         },
 
 
         /**
          * Get URL Parameters
          */
-        getUrlParameter : function (name) {
+        getUrlParameter: function (name) {
             "use strict";
             if (this.urlParameters === null) { // Cache miss
                 var hash, hashes, i;
@@ -1155,7 +1076,7 @@ var GOL = {
         /**
          * Register Event
          */
-        registerEvent : function (element, event, handler, capture) {
+        registerEvent: function (element, event, handler, capture) {
             "use strict";
             if (/msie/i.test(navigator.userAgent)) {
                 element.attachEvent('on' + event, handler);
@@ -1168,7 +1089,7 @@ var GOL = {
         /**
          *
          */
-        mousePosition : function (e) {
+        mousePosition: function (e) {
             "use strict";
             // http://www.malleus.de/FAQ/getImgMousePos.html
             // http://www.quirksmode.org/js/events_properties.html#position
