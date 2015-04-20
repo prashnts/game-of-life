@@ -180,8 +180,6 @@ var GOL = {
         "use strict";
         try {
             this.listLife.init();   // Reset/init algorithm
-            //this.loadConfig();      // Load config from URL (autoplay, colors, zoom, ...)
-            //this.loadState();       // Load state from URL
             this.keepDOMElements(); // Keep DOM References (getElementsById)
             this.canvas.init();     // Init canvas GUI
             this.registerEvents();  // Register event handlers
@@ -191,73 +189,6 @@ var GOL = {
             alert("Error: " + e);
         }
     },
-
-
-    /**
-     * Load config from URL
-     */
-    loadConfig : function () {
-        "use strict";
-        var colors, grid, zoom;
-
-        this.autoplay = this.helpers.getUrlParameter('autoplay') === '1' ? true : this.autoplay;
-        this.trail.current = this.helpers.getUrlParameter('trail') === '1' ? true : this.trail.current;
-
-        // Initial color config
-        colors = parseInt(this.helpers.getUrlParameter('colors'), 10);
-        if (isNaN(colors) || colors < 1 || colors > GOL.colors.schemes.length) {
-            colors = 1;
-        }
-
-        // Initial grid config
-        grid = parseInt(this.helpers.getUrlParameter('grid'), 10);
-        if (isNaN(grid) || grid < 1 || grid > GOL.grid.schemes.length) {
-            grid = 1;
-        }
-
-        // Initial zoom config
-        zoom = parseInt(this.helpers.getUrlParameter('zoom'), 10);
-        if (isNaN(zoom) || zoom < 1 || zoom > GOL.zoom.schemes.length) {
-            zoom = 1;
-        }
-
-        this.colors.current = colors - 1;
-        this.grid.current = grid - 1;
-        this.zoom.current = zoom - 1;
-
-        this.rows = this.zoom.schemes[this.zoom.current].rows;
-        this.columns = this.zoom.schemes[this.zoom.current].columns;
-    },
-
-
-    /**
-     * Load world state from URL parameter
-     */
-    loadState : function () {
-        "use strict";
-        var state, i, j, y, s = this.helpers.getUrlParameter('s');
-
-        if (s === 'random') {
-            this.randomState();
-        } else {
-            if (s === undefined) {
-                s = this.initialState;
-            }
-
-            state = jsonParse(decodeURI(s));
-
-            for (i = 0; i < state.length; i += 1) {
-                for (y in state[i]) {
-                    if (state[i].hasOwnProperty(y)) {
-                        for (j = 0; j < state[i][y].length; j += 1) {
-                            this.listLife.addCell(state[i][y][j], parseInt(y, 10), this.listLife.actualState);
-                        }
-                    }
-                }
-            }
-        }
-    },
-
 
     /**
      * Create a random pattern
