@@ -6,7 +6,7 @@
  * 04/Sep/2010
  */
 
-var len = 10;
+var len = 20;
 
 var canvas = document.getElementById('canvas-demo');
 
@@ -17,13 +17,13 @@ var pixelView = new obelisk.PixelView(canvas, point);
 // create dimension instance
 var dimension = new obelisk.CubeDimension(len, len, len);
 var color = new obelisk.CubeColor().getByHorizontalColor(obelisk.ColorPattern.GRAY);
-var color_alive = new obelisk.CubeColor().getByHorizontalColor(obelisk.ColorPattern.GRAY);
+var color_alive = new obelisk.CubeColor().getByHorizontalColor(obelisk.ColorPattern.BLUE);
 var color_dead = new obelisk.CubeColor().getByHorizontalColor(obelisk.ColorPattern.GRAY);
-var color_trail = new obelisk.CubeColor().getByHorizontalColor(obelisk.ColorPattern.GRAY);
+var color_trail = new obelisk.CubeColor().getByHorizontalColor(obelisk.ColorPattern.PURPLE);
 var cube = new obelisk.Cube(dimension, color);
-var cube_alive = new obelisk.Cube(dimension, color);
-var cube_dead = new obelisk.Cube(dimension, color);
-var cube_trail = new obelisk.Cube(dimension, color);
+var cube_alive = new obelisk.Cube(dimension, color_alive);
+var cube_dead = new obelisk.Cube(dimension, color_dead);
+var cube_trail = new obelisk.Cube(dimension, color_trail);
 
 // render primitive to view
 pixelView.renderObject(cube);
@@ -1040,19 +1040,20 @@ var GOL = {
          */
         drawCell: function (i, j, alive) {
             "use strict";
-            
-            new obelisk.PixelView(canvas, new obelisk.Point(i * 20, j * 10)).renderObject(cube);
 
             if (alive) {
 
                 if (this.age[i][j] > -1) {
                     this.context.fillStyle = GOL.colors.schemes[GOL.colors.current].alive[this.age[i][j] % GOL.colors.schemes[GOL.colors.current].alive.length];
+                    new obelisk.PixelView(canvas, new obelisk.Point(i * 20, j * 10)).renderObject(cube_alive);
                 }
             } else {
                 if (GOL.trail.current && this.age[i][j] < 0) {
                     this.context.fillStyle = GOL.colors.schemes[GOL.colors.current].trail[(this.age[i][j] * -1) % GOL.colors.schemes[GOL.colors.current].trail.length];
+                    new obelisk.PixelView(canvas, new obelisk.Point(i * 20, j * 10)).renderObject(cube_trail);
                 } else {
                     this.context.fillStyle = GOL.colors.schemes[GOL.colors.current].dead;
+                    new obelisk.PixelView(canvas, new obelisk.Point(i * 20, j * 10)).renderObject(cube_dead);
                 }
             }
 
