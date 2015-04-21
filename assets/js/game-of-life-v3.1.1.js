@@ -101,7 +101,6 @@ var GOL = {
                     '#8585FF'
                 ]
             }
-
         ]
     },
 
@@ -945,7 +944,7 @@ var GOL = {
         height: null,
         age: null,
         cellSize: null,
-        cellSpace: null,
+        cellSpace: 1,
 
 
         /**
@@ -960,9 +959,9 @@ var GOL = {
             this.cellSize = GOL.zoom.schemes[GOL.zoom.current].cellSize;
             this.cellSpace = 1;
 
-            GOL.helpers.registerEvent(this.canvas, 'mousedown', GOL.handlers.canvasMouseDown, false);
-            GOL.helpers.registerEvent(document, 'mouseup', GOL.handlers.canvasMouseUp, false);
-            GOL.helpers.registerEvent(this.canvas, 'mousemove', GOL.handlers.canvasMouseMove, false);
+            //GOL.helpers.registerEvent(this.canvas, 'mousedown', GOL.handlers.canvasMouseDown, false);
+            //GOL.helpers.registerEvent(document, 'mouseup', GOL.handlers.canvasMouseUp, false);
+            //GOL.helpers.registerEvent(this.canvas, 'mousemove', GOL.handlers.canvasMouseMove, false);
 
             this.clearWorld();
         },
@@ -993,20 +992,11 @@ var GOL = {
             "use strict";
             var i, j;
 
-            // Special no grid case
-            if (GOL.grid.schemes[GOL.grid.current].color === '') {
-                this.setNoGridOn();
-                this.width = this.height = 0;
-            } else {
-                this.setNoGridOff();
-                this.width = this.height = 1;
-            }
-
             // Dynamic canvas size
-            this.width = this.width + (this.cellSpace * GOL.columns) + (this.cellSize * GOL.columns);
+            this.width = 1 + (this.cellSpace * GOL.columns) + (this.cellSize * GOL.columns);
             this.canvas.setAttribute('width', this.width);
 
-            this.height = this.height + (this.cellSpace * GOL.rows) + (this.cellSize * GOL.rows);
+            this.height = 1 + (this.cellSpace * GOL.rows) + (this.cellSize * GOL.rows);
             this.canvas.getAttribute('height', this.height);
 
             // Fill background
@@ -1023,27 +1013,6 @@ var GOL = {
                 }
             }
         },
-
-
-        /**
-         * setNoGridOn
-         */
-        setNoGridOn: function () {
-            "use strict";
-            this.cellSize = GOL.zoom.schemes[GOL.zoom.current].cellSize + 1;
-            this.cellSpace = 0;
-        },
-
-
-        /**
-         * setNoGridOff
-         */
-        setNoGridOff: function () {
-            "use strict";
-            this.cellSize = GOL.zoom.schemes[GOL.zoom.current].cellSize;
-            this.cellSpace = 1;
-        },
-
 
         /**
          * drawCell
@@ -1551,15 +1520,20 @@ GOL.helpers.registerEvent(window, 'load', function () {
     GOL.init();
 }, false);
 
+var len = 10;
+
 var canvas = document.getElementById('canvas-demo');
 
 // create pixel view container in point
-var point = new obelisk.Point(500, 240);
+var point = new obelisk.Point(10, 10);
 var pixelView = new obelisk.PixelView(canvas, point);
 
-// create cube
-var dimension = new obelisk.CubeDimension(120, 200, 60);
+// create dimension instance
+var dimension = new obelisk.CubeDimension(len, len, len);
 var color = new obelisk.CubeColor().getByHorizontalColor(obelisk.ColorPattern.GRAY);
 var cube = new obelisk.Cube(dimension, color);
-//var cube = new obelisk.Cube(dimension, color, false);
+
+// render primitive to view
 pixelView.renderObject(cube);
+
+new obelisk.PixelView(canvas, new obelisk.Point(10, 20)).renderObject(cube);
