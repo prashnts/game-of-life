@@ -1,53 +1,55 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <script src="assets/js/json-sans-eval.js"></script>
-    <script src="assets/js/css-browser-selector.js"></script>
-    <script src="assets/js/game-of-life-v3.1.1.js"></script>
+    <head>
+        <script src="assets/js/json-sans-eval.js"></script>
+        <script src="assets/js/css-browser-selector.js"></script>
 
-    <link rel="stylesheet" type="text/css" href="assets/css/style.css" />
-    <meta http-equiv="Content-type" content="text/html;charset=UTF-8" />
+        <link rel="stylesheet" type="text/css" href="assets/css/style.css" />
+        <meta http-equiv="Content-type" content="text/html;charset=UTF-8" />
 
-    <title>Conway's Game of Life - Javascript/Canvas Implementation</title>
-  </head>
-  <body>
-    <div id="wrapper">
-      <canvas id="canvas" width="901" height="433"></canvas>
+        <title>Conway's Game of Life - Javascript/Canvas Implementation</title>
+    </head>
+    <body>
+        <div id="wrapper">
+            <canvas id="canvas" width="901" height="433"></canvas>
+            <canvas id="canvas-demo" width="1200" height="600" style=""></canvas>
 
-      <div class="cl">&nbsp;</div>
-      <div class="box">
-        <div class="subtitle">Running Information</div>
-        <p class="info"><abbr title="Current Generation">Generation</abbr>: <span id="generation"></span> | <abbr title="Number of live cells">Live cells</abbr>: <span id="livecells"></span> | <abbr title="Execution times: Algorithm / Canvas (Algorithm / Canvas Averages)">Step time</abbr>: <span id="steptime"></span> ms </p>
-      </div>
+            <div class="cl">&nbsp;</div>
+            <div class="box">
+                <div class="subtitle">Running Information</div>
+                <p class="info"><abbr title="Current Generation">Generation</abbr>: <span id="generation"></span> | <abbr title="Number of live cells">Live cells</abbr>: <span id="livecells"></span> | <abbr title="Execution times: Algorithm / Canvas (Algorithm / Canvas Averages)">Step time</abbr>: <span id="steptime"></span> ms </p>
+            </div>
 
-      <div class="box controls">
-        <form action="">
-          <input type="button" value="Run" id="buttonRun" title="Key: R" />
-          <input type="button" value="Step" id="buttonStep" title="Key: S" />
-          <input type="button" value="Clear" id="buttonClear" title="Key: C" />
-          <input type="button" value="Export" id="buttonExport" />
-          <span id="exportUrl"> | <a id="exportUrlLink">Link</a> | <a id="exportTinyUrlLink" title="Tiny URL">Create micro URL</a></span>
-        </form>
-      </div>
+            <div class="box controls">
+                <form action="">
+                    <input type="button" value="Run" id="buttonRun" title="Key: R" />
+                    <input type="button" value="Step" id="buttonStep" title="Key: S" />
+                    <input type="button" value="Clear" id="buttonClear" title="Key: C" />
+                    <input type="button" value="Export" id="buttonExport" />
+                    <span id="exportUrl"> | <a id="exportUrlLink">Link</a> | <a id="exportTinyUrlLink" title="Tiny URL">Create micro URL</a></span>
+                </form>
+            </div>
 
-      <div class="box layout">
-        <form>
-         <input type="button" id="buttonTrail" value="Trail"/>
-         <input type="button" id="buttonGrid" value="Grid" />
-         <input type="button" id="buttonColors" value="Colors" />
-         <span id="layoutMessages"></span>
-        </form>
-      </div>
+            <div class="box layout">
+                <form>
+                 <input type="button" id="buttonTrail" value="Trail"/>
+                 <input type="button" id="buttonGrid" value="Grid" />
+                 <input type="button" id="buttonColors" value="Colors" />
+                 <span id="layoutMessages"></span>
+                </form>
+            </div>
 
-      <div class="box patterns">
-        <div class="subtitle">Patterns</div>
-        <div class="button"><a title="Still Life Patterns">Still Life</a></div>
-        <div class="button"><a title="Gosper Glider Gun">Gosper Glider Gun</a></div>
-        <div class="button"><a title="Acorn Patter">Acorn</a></div>
-        <div class="button"><a title="Random Pattern">Random</a></div>
-        <div class="cl">&nbsp;</div>
-      </div>
+            <div class="box patterns">
+                <div class="subtitle">Patterns</div>
+                <div class="button"><a title="Still Life Patterns">Still Life</a></div>
+                <div class="button"><a title="Gosper Glider Gun">Gosper Glider Gun</a></div>
+                <div class="button"><a title="Acorn Patter">Acorn</a></div>
+                <div class="button"><a title="Random Pattern">Random</a></div>
+                <div class="cl">&nbsp;</div>
+            </div>
 
-    </div>
-  </body>
+        </div>
+        <script src="bower_components/obelisk.js/build/obelisk.min.js"></script>
+        <script src="assets/js/game-of-life-v3.1.1.js"></script>
+    </body>
 </html>
