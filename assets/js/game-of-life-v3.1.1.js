@@ -607,8 +607,8 @@ var GOL = {
      */
     loadConfig: function () {
         "use strict";
-        this.autoplay = this.helpers.getUrlParameter('autoplay') === '1' ? true : this.autoplay;
-        this.trail.current = this.helpers.getUrlParameter('trail') === '1' ? true : this.trail.current;
+        this.autoplay = true;
+        this.trail.current = true;
 
         this.rows = this.zoom.schemes[this.zoom.current].rows;
         this.columns = this.zoom.schemes[this.zoom.current].columns;
@@ -1033,7 +1033,12 @@ var GOL = {
                 }
             }
 
-            this.context.fillRect(this.cellSpace + (this.cellSpace * i) + (this.cellSize * i), this.cellSpace + (this.cellSpace * j) + (this.cellSize * j), this.cellSize, this.cellSize);
+            this.context.fillRect(
+                this.cellSpace + (this.cellSpace * i) + (this.cellSize * i),
+                this.cellSpace + (this.cellSpace * j) + (this.cellSize * j),
+                this.cellSize,
+                this.cellSize
+            );
         },
 
 
@@ -1432,29 +1437,6 @@ var GOL = {
             "use strict";
             return min <= max ? min + Math.round(Math.random() * (max - min)) : null;
         },
-
-
-        /**
-         * Get URL Parameters
-         */
-        getUrlParameter: function (name) {
-            "use strict";
-            if (this.urlParameters === null) { // Cache miss
-                var hash, hashes, i;
-
-                this.urlParameters = [];
-                hashes = window.location.href.slice(window.location.href.indexOf('?') + 1).split('&');
-
-                for (i = 0; i < hashes.length; i += 1) {
-                    hash = hashes[i].split('=');
-                    this.urlParameters.push(hash[0]);
-                    this.urlParameters[hash[0]] = hash[1];
-                }
-            }
-
-            return this.urlParameters[name];
-        },
-
 
         /**
          * Register Event
