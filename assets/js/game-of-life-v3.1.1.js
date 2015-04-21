@@ -6,6 +6,27 @@
  * 04/Sep/2010
  */
 
+var len = 10;
+
+var canvas = document.getElementById('canvas-demo');
+
+// create pixel view container in point
+var point = new obelisk.Point(10, 10);
+var pixelView = new obelisk.PixelView(canvas, point);
+
+// create dimension instance
+var dimension = new obelisk.CubeDimension(len, len, len);
+var color = new obelisk.CubeColor().getByHorizontalColor(obelisk.ColorPattern.GRAY);
+var color_alive = new obelisk.CubeColor().getByHorizontalColor(obelisk.ColorPattern.GRAY);
+var color_dead = new obelisk.CubeColor().getByHorizontalColor(obelisk.ColorPattern.GRAY);
+var color_trail = new obelisk.CubeColor().getByHorizontalColor(obelisk.ColorPattern.GRAY);
+var cube = new obelisk.Cube(dimension, color);
+var cube_alive = new obelisk.Cube(dimension, color);
+var cube_dead = new obelisk.Cube(dimension, color);
+var cube_trail = new obelisk.Cube(dimension, color);
+
+// render primitive to view
+pixelView.renderObject(cube);
 
 var GOL = {
 
@@ -1019,6 +1040,8 @@ var GOL = {
          */
         drawCell: function (i, j, alive) {
             "use strict";
+            
+            new obelisk.PixelView(canvas, new obelisk.Point(i * 20, j * 10)).renderObject(cube);
 
             if (alive) {
 
@@ -1502,20 +1525,3 @@ GOL.helpers.registerEvent(window, 'load', function () {
     GOL.init();
 }, false);
 
-var len = 10;
-
-var canvas = document.getElementById('canvas-demo');
-
-// create pixel view container in point
-var point = new obelisk.Point(10, 10);
-var pixelView = new obelisk.PixelView(canvas, point);
-
-// create dimension instance
-var dimension = new obelisk.CubeDimension(len, len, len);
-var color = new obelisk.CubeColor().getByHorizontalColor(obelisk.ColorPattern.GRAY);
-var cube = new obelisk.Cube(dimension, color);
-
-// render primitive to view
-pixelView.renderObject(cube);
-
-new obelisk.PixelView(canvas, new obelisk.Point(10, 20)).renderObject(cube);
