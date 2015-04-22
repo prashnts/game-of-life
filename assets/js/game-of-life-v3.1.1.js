@@ -57,7 +57,7 @@ var GOL = {
 
         schemes: [
             {
-                dead: '#FFFFFF',
+                dead: '#222',
                 trail: [
                     '#B5ECA2'
                 ],
@@ -601,7 +601,7 @@ var GOL = {
 
         if (this.autoplay) {
             this.autoplay = false;
-            this.action.play();
+            this.action.toggle();
         }
     },
 
@@ -670,12 +670,23 @@ var GOL = {
     },
 
     action: {
+        toggle: function () {
+            "use strict";
+            if (!GOL.running) {
+                GOL.running = true;
+                GOL.nextStep();
+            } else {
+                GOL.running = false;
+            }
+        },
+
         play: function () {
             "use strict";
             GOL.running = true;
             GOL.nextStep();
         },
-        pause: function () {
+
+        stop: function () {
             "use strict";
             GOL.running = false;
         },
@@ -690,10 +701,30 @@ var GOL = {
             if (GOL.running) {
                 GOL.clear.schedule = true;
                 GOL.running = false;
-                document.getElementById('buttonRun').value = 'Run';
             } else {
                 GOL.cleanUp();
             }
+        },
+
+        switchSimulation: function (code) {
+            "use strict";
+            this.stop();
+            this.end();
+            switch (code) {
+            case "1":
+                GOL.helpers.readStateIntoListLife(GOL.states.acorn);
+                break;
+            case "2":
+                GOL.helpers.readStateIntoListLife(GOL.states.still_life);
+                break;
+            case "3":
+                GOL.helpers.readStateIntoListLife(GOL.states.glider_gun);
+                break;
+            default:
+                GOL.randomState();
+            }
+            this.play();
+
         }
     },
 
@@ -708,7 +739,7 @@ var GOL = {
         init: function () {
             "use strict";
 
-            this.canvas = document.getElementById('canvas');
+            this.canvas = document.getElementById('canvas-2d');
             this.context = this.canvas.getContext('2d');
             this.setCanvasSize();
             this.clearWorld();
@@ -810,7 +841,7 @@ var GOL = {
             this.canvas.setAttribute('width', this.width);
 
             this.height = 1 + (this.cellSpace * GOL.rows) + (this.cellSize * GOL.rows);
-            this.canvas.getAttribute('height', this.height);
+            this.canvas.setAttribute('height', this.height);
         }
     },
 
@@ -827,7 +858,9 @@ var GOL = {
 
         init: function () {
             "use strict";
-            this.context = document.getElementById('canvas-demo');
+            this.context = document.getElementById('canvas-iso');
+            this.context.setAttribute('height', window.innerHeight);
+            this.context.setAttribute('width', window.innerWidth);
             this.obelisk_color.alive = new obelisk.CubeColor().getByHorizontalColor(this.colors.alive);
             this.obelisk_color.dead = new obelisk.CubeColor().getByHorizontalColor(this.colors.dead);
             this.obelisk_color.trail = new obelisk.CubeColor().getByHorizontalColor(this.colors.trail);
@@ -851,9 +884,14 @@ var GOL = {
                 if (GOL.canvas.age[i][j] < 0) {
                     new obelisk.PixelView(this.context, new obelisk.Point(i_pos, j_pos)).renderObject(this.cubes.cube_trail);
                 } else {
-                    new obelisk.PixelView(this.context, new obelisk.Point(i_pos, j_pos)).renderObject(this.cubes.cube_dead);
+                    //new obelisk.PixelView(this.context, new obelisk.Point(i_pos, j_pos)).renderObject(this.cubes.cube_dead);
                 }
             }
+        },
+
+        clear: function () {
+            "use strict";
+            return;
         }
     },
 

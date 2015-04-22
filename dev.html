@@ -1,0 +1,71 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width initial-scale=1" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+    <title>Conway's Game of Life | Code and Cake</title>
+    <meta name="description" content="An isometric-ish implementation of Conway's Game of Life.">
+
+    <link rel="apple-touch-icon" sizes="57x57" href="/assets/img/favicon/favicon/apple-touch-icon-57x57.png">
+    <link rel="apple-touch-icon" sizes="60x60" href="/assets/img/favicon/apple-touch-icon-60x60.png">
+    <link rel="apple-touch-icon" sizes="72x72" href="/assets/img/favicon/apple-touch-icon-72x72.png">
+    <link rel="apple-touch-icon" sizes="76x76" href="/assets/img/favicon/apple-touch-icon-76x76.png">
+    <link rel="apple-touch-icon" sizes="114x114" href="/assets/img/favicon/apple-touch-icon-114x114.png">
+    <link rel="apple-touch-icon" sizes="120x120" href="/assets/img/favicon/apple-touch-icon-120x120.png">
+    <link rel="apple-touch-icon" sizes="144x144" href="/assets/img/favicon/apple-touch-icon-144x144.png">
+    <link rel="apple-touch-icon" sizes="152x152" href="/assets/img/favicon/apple-touch-icon-152x152.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/assets/img/favicon/apple-touch-icon-180x180.png">
+    <link rel="icon" type="image/png" href="/assets/img/favicon/favicon-32x32.png" sizes="32x32">
+    <link rel="icon" type="image/png" href="/assets/img/favicon/favicon-194x194.png" sizes="194x194">
+    <link rel="icon" type="image/png" href="/assets/img/favicon/favicon-96x96.png" sizes="96x96">
+    <link rel="icon" type="image/png" href="/assets/img/favicon/android-chrome-192x192.png" sizes="192x192">
+    <link rel="icon" type="image/png" href="/assets/img/favicon/favicon-16x16.png" sizes="16x16">
+    <link rel="manifest" href="/assets/img/favicon/manifest.json">
+    <link rel="shortcut icon" href="/assets/img/favicon/favicon.ico">
+    <meta name="msapplication-TileColor" content="#2b5797">
+    <meta name="msapplication-TileImage" content="/assets/img/favicon/mstile-144x144.png">
+    <meta name="msapplication-config" content="/assets/img/favicon/browserconfig.xml">
+    <meta name="theme-color" content="#0d47a1">
+
+    <link rel="stylesheet" href="http://prshnts.in/css/main.css">
+    <link rel="canonical" href="http://prshnts.in/notes/electronics/2015/03/10/notes-on-pcb.html">
+</head>
+
+<body class="cakes-one">
+    <header>
+        <a href="/"><img src="https://prshnts.in/assets/img/codeandcakes.png" alt="Code and Cake" class="icon"></a>
+        <h2>Conway's Game of Life</h2>
+        <p>This is an implementation of John Conway's Game of Life in JavaScript. It's built using <a href="http://dotat.at/prog/life/life.html" target="_blank">Tony Finch's List Life</a> algorithm and <a href="https://github.com/nosir/obelisk.js">obelisk.js</a>.</p>
+        <h3>Instructions</h3>
+        <p>Use the controls below to interact with the simulation. You can change the pattern in the dropdown.</p>
+        <ul class="inline lg">
+            <li><a href="#" onclick="GOL.action.toggle()">Play/Pause</a></li>
+            <li><a href="#" onclick="GOL.action.step()">Step</a></li>
+            <li><a href="#" onclick="GOL.action.end()">End</a></li>
+            <li>
+                <select onchange="GOL.action.switchSimulation(this.value);">
+                    <option value="0">Random Life</option>
+                    <option value="1">Acorn</option>
+                    <option value="2">Still Life</option>
+                    <option value="3">Glider Gun</option>
+                </select>
+            </li>
+        </ul>
+        <ul class="unmarked">
+            <li><abbr title="Current Generation">Generation</abbr>: <span id="generation"></span></li>
+            <li><abbr title="Total Live Cells">Live Cells</abbr>: <span id="livecells"></span></li>
+        </ul>
+        <canvas id="canvas-2d"></canvas>
+    </header>
+    <canvas id="canvas-iso" style=""></canvas>
+    <footer class="site-footer">
+        
+    </footer>
+        <script src="bower_components/obelisk.js/build/obelisk.min.js"></script>
+        <script src="assets/js/game-of-life-v3.1.1.js"></script>
+</body>
+</html>
+
