@@ -571,10 +571,11 @@ var GOL = {
         "use strict";
         try {
             this.listLife.init();   // Reset/init algorithm
-            this.helpers.readStateIntoListLife(this.states.glider_gun);
+            this.helpers.readStateIntoListLife(this.states.acorn);
             this.keepDOMElements(); // Keep DOM References (getElementsById)
             this.canvas.init();     // Init canvas GUI
-            this.registerEvents();  // Register event handlers
+            //this.registerEvents();  // Register event handlers
+            this.iso_canvas.init();
 
             this.prepare();
         } catch (e) {
@@ -904,7 +905,7 @@ var GOL = {
 
 
     /**
-     * Marked for update.
+     *
      */
     canvas: {
         context: null,
@@ -964,19 +965,6 @@ var GOL = {
             this.height = 1 + (this.cellSpace * GOL.rows) + (this.cellSize * GOL.rows);
             this.canvas.getAttribute('height', this.height);
 
-            // Fill background
-            //this.context.fillStyle = GOL.grid.schemes[GOL.grid.current].color;
-            //this.context.fillRect(0, 0, this.width, this.height);
-            /*
-            for (i = 0; i < GOL.columns; i += 1) {
-                for (j = 0; j < GOL.rows; j += 1) {
-                    if (GOL.listLife.isAlive(i, j)) {
-                        this.drawCell(i, j, true);
-                    } else {
-                        this.drawCell(i, j, false);
-                    }
-                }
-            }*/
             for (i = GOL.rows - 1; i > 0; i -= 1) {
                 for (j = GOL.columns - 1; j > 0; j -= 1) {
                     if (GOL.listLife.isAlive(j, i)) {
@@ -997,18 +985,17 @@ var GOL = {
             if (alive) {
 
                 if (this.age[i][j] > -1) {
-                    this.context.fillStyle = GOL.colors.schemes[GOL.colors.current].alive[this.age[i][j] % GOL.colors.schemes[GOL.colors.current].alive.length];
-                    //new obelisk.PixelView(canvas, new obelisk.Point(i * mul_x, j * mul_y)).renderObject(cube_alive);
+                    this.context.fillStyle = GOL.colors.schemes[0].alive[4];
                 }
             } else {
                 if (GOL.trail.current && this.age[i][j] < 0) {
                     this.context.fillStyle = GOL.colors.schemes[GOL.colors.current].trail[(this.age[i][j] * -1) % GOL.colors.schemes[GOL.colors.current].trail.length];
-                    //new obelisk.PixelView(canvas, new obelisk.Point(i * mul_x, j * mul_y)).renderObject(cube_trail);
                 } else {
                     this.context.fillStyle = GOL.colors.schemes[GOL.colors.current].dead;
-                    //new obelisk.PixelView(canvas, new obelisk.Point(i * mul_x, j * mul_y)).renderObject(cube_dead);
                 }
             }
+
+            GOL.iso_canvas.drawCell(i, j, alive, this.age[i][j]);
 
             this.context.fillRect(
                 (this.cellSize * i),
@@ -1072,7 +1059,6 @@ var GOL = {
 
     iso_canvas: {
         context: null,
-        dimension: null,
         cube_len: 12,
         colors: {
             alive: 0x42A5F5,
@@ -1085,33 +1071,32 @@ var GOL = {
         init: function () {
             "use strict";
             this.context = document.getElementById('canvas-demo');
-            this.dimension = new obelisk.CubeDimension(this.cube_len, this.cube_len, this.cube_len);
-
             this.obelisk_color.alive = new obelisk.CubeColor().getByHorizontalColor(this.colors.alive);
             this.obelisk_color.dead = new obelisk.CubeColor().getByHorizontalColor(this.colors.dead);
             this.obelisk_color.trail = new obelisk.CubeColor().getByHorizontalColor(this.colors.trail);
 
-            this.cubes.alive = new obelisk.Cube(this.dimension, this.obelisk_color.alive);
-            this.cubes.dead = new obelisk.Cube(this.dimension, this.obelisk_color.dead);
-            this.cubes.trail = new obelisk.Cube(this.dimension, this.obelisk_color.trail);
-
-            // create pixel view container in point
-            var point = new obelisk.Point(10, 10);
-            var pixelView = new obelisk.PixelView(canvas, point);
-
-            var cube = new obelisk.Cube(dimension, color);
-            var cube_alive = new obelisk.Cube(dimension, color_alive);
-            var cube_dead = new obelisk.Cube(dimension, color_dead);
-            var cube_trail = new obelisk.Cube(dimension, color_trail);
-
-            var mul_x = 12, mul_y = 12;
-
-            // render primitive to view
-            pixelView.renderObject(cube);
+            var dimension = new obelisk.CubeDimension(this.cube_len, this.cube_len, this.cube_len);
+            this.cubes.cube_alive = new obelisk.Cube(dimension, this.obelisk_color.alive);
+            this.cubes.cube_trail = new obelisk.Cube(dimension, this.obelisk_color.trail);
+            this.cubes.cube_dead  = new obelisk.Cube(dimension, this.obelisk_color.dead);
         },
 
-        drawCell: function () {
+        drawCell: function (i, j, alive) {
             "use strict";
+            var i_pos = i * this.cube_len,
+                j_pos = j * this.cube_len;
+
+            if (alive) {
+                if (GOL.canvas.age[i][j] > -1) {
+                    new obelisk.PixelView(this.context, new obelisk.Point(i_pos, j_pos)).renderObject(this.cubes.cube_alive);
+                }
+            } else {
+                if (GOL.canvas.age[i][j] < 0) {
+                    new obelisk.PixelView(this.context, new obelisk.Point(i_pos, j_pos)).renderObject(this.cubes.cube_trail);
+                } else {
+                    new obelisk.PixelView(this.context, new obelisk.Point(i_pos, j_pos)).renderObject(this.cubes.cube_dead);
+                }
+            }
         }
     },
 
