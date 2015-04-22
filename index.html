@@ -1,55 +1,72 @@
+
 <!DOCTYPE html>
 <html>
-    <head>
-        <script src="assets/js/json-sans-eval.js"></script>
-        <script src="assets/js/css-browser-selector.js"></script>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width initial-scale=1" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
 
-        <link rel="stylesheet" type="text/css" href="assets/css/style.css" />
-        <meta http-equiv="Content-type" content="text/html;charset=UTF-8" />
+    <title>Conway's Game of Life | Code and Cake</title>
+    <meta name="description" content="An isometric-ish implementation of Conway's Game of Life.">
 
-        <title>Conway's Game of Life - Javascript/Canvas Implementation</title>
-    </head>
-    <body>
-        <div id="wrapper">
-            <canvas id="canvas-2d" width="901" height="433"></canvas>
-            <canvas id="canvas-iso" width="1200" height="1600" style=""></canvas>
+    <link rel="apple-touch-icon" sizes="57x57" href="/assets/img/favicon/favicon/apple-touch-icon-57x57.png">
+    <link rel="apple-touch-icon" sizes="60x60" href="/assets/img/favicon/apple-touch-icon-60x60.png">
+    <link rel="apple-touch-icon" sizes="72x72" href="/assets/img/favicon/apple-touch-icon-72x72.png">
+    <link rel="apple-touch-icon" sizes="76x76" href="/assets/img/favicon/apple-touch-icon-76x76.png">
+    <link rel="apple-touch-icon" sizes="114x114" href="/assets/img/favicon/apple-touch-icon-114x114.png">
+    <link rel="apple-touch-icon" sizes="120x120" href="/assets/img/favicon/apple-touch-icon-120x120.png">
+    <link rel="apple-touch-icon" sizes="144x144" href="/assets/img/favicon/apple-touch-icon-144x144.png">
+    <link rel="apple-touch-icon" sizes="152x152" href="/assets/img/favicon/apple-touch-icon-152x152.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/assets/img/favicon/apple-touch-icon-180x180.png">
+    <link rel="icon" type="image/png" href="/assets/img/favicon/favicon-32x32.png" sizes="32x32">
+    <link rel="icon" type="image/png" href="/assets/img/favicon/favicon-194x194.png" sizes="194x194">
+    <link rel="icon" type="image/png" href="/assets/img/favicon/favicon-96x96.png" sizes="96x96">
+    <link rel="icon" type="image/png" href="/assets/img/favicon/android-chrome-192x192.png" sizes="192x192">
+    <link rel="icon" type="image/png" href="/assets/img/favicon/favicon-16x16.png" sizes="16x16">
+    <link rel="manifest" href="/assets/img/favicon/manifest.json">
+    <link rel="shortcut icon" href="/assets/img/favicon/favicon.ico">
+    <meta name="msapplication-TileColor" content="#2b5797">
+    <meta name="msapplication-TileImage" content="/assets/img/favicon/mstile-144x144.png">
+    <meta name="msapplication-config" content="/assets/img/favicon/browserconfig.xml">
+    <meta name="theme-color" content="#0d47a1">
 
-            <div class="cl">&nbsp;</div>
-            <div class="box">
-                <div class="subtitle">Running Information</div>
-                <p class="info"><abbr title="Current Generation">Generation</abbr>: <span id="generation"></span> | <abbr title="Number of live cells">Live cells</abbr>: <span id="livecells"></span> | <abbr title="Execution times: Algorithm / Canvas (Algorithm / Canvas Averages)">Step time</abbr>: <span id="steptime"></span> ms </p>
-            </div>
+    <link rel="stylesheet" href="http://prshnts.in/css/main.css">
+    <link rel="canonical" href="http://prshnts.in/game-of-life">
+</head>
 
-            <div class="box controls">
-                <form action="">
-                    <input type="button" value="Run" id="buttonRun" title="Key: R" />
-                    <input type="button" value="Step" id="buttonStep" title="Key: S" />
-                    <input type="button" value="Clear" id="buttonClear" title="Key: C" />
-                    <input type="button" value="Export" id="buttonExport" />
-                    <span id="exportUrl"> | <a id="exportUrlLink">Link</a> | <a id="exportTinyUrlLink" title="Tiny URL">Create micro URL</a></span>
-                </form>
-            </div>
+<body class="cakes-one">
+    <header>
+        <a href="/"><img src="https://prshnts.in/assets/img/codeandcakes.png" alt="Code and Cake" class="icon"></a>
+        <h2>Conway's Game of Life</h2>
+        <p>This is an implementation of John Conway's Game of Life in JavaScript. It's built using <a href="http://dotat.at/prog/life/life.html" target="_blank">Tony Finch's List Life</a> algorithm and <a href="https://github.com/nosir/obelisk.js">obelisk.js</a>.</p>
+        <h3>Instructions</h3>
+        <p>Use the controls below to interact with the simulation. You can change the pattern in the dropdown.</p>
+        <ul class="inline lg">
+            <li><a href="#" onclick="GOL.action.toggle()">Play/Pause</a></li>
+            <li><a href="#" onclick="GOL.action.step()">Step</a></li>
+            <li><a href="#" onclick="GOL.action.end()">End</a></li>
+            <li>
+                <select onchange="GOL.action.switchSimulation(this.value);">
+                    <option value="0">Random Life</option>
+                    <option value="1">Acorn</option>
+                    <option value="2">Still Life</option>
+                    <option value="3">Glider Gun</option>
+                </select>
+            </li>
+        </ul>
+        <ul class="unmarked">
+            <li><abbr title="Current Generation">Generation</abbr>: <span id="generation"></span></li>
+            <li><abbr title="Total Live Cells">Live Cells</abbr>: <span id="livecells"></span></li>
+        </ul>
+        <canvas id="canvas-2d"></canvas>
+        <hr>
+        <span><a href="https://github.com/PrashntS/game-of-life">Explore on GitHub</a></span><br>
+        <span><small>This work is licensed under <a href="https://github.com/PrashntS/game-of-life/blob/master/LICENSE">MIT</a>.</small></span>
+    </header>
+    <canvas id="canvas-iso" style=""></canvas>
 
-            <div class="box layout">
-                <form>
-                 <input type="button" id="buttonTrail" value="Trail"/>
-                 <input type="button" id="buttonGrid" value="Grid" />
-                 <input type="button" id="buttonColors" value="Colors" />
-                 <span id="layoutMessages"></span>
-                </form>
-            </div>
-
-            <div class="box patterns">
-                <div class="subtitle">Patterns</div>
-                <div class="button"><a title="Still Life Patterns">Still Life</a></div>
-                <div class="button"><a title="Gosper Glider Gun">Gosper Glider Gun</a></div>
-                <div class="button"><a title="Acorn Patter">Acorn</a></div>
-                <div class="button"><a title="Random Pattern">Random</a></div>
-                <div class="cl">&nbsp;</div>
-            </div>
-
-        </div>
-        <script src="bower_components/obelisk.js/build/obelisk.min.js"></script>
-        <script src="assets/js/game-of-life-v3.1.1.js"></script>
-    </body>
+    <script src="bower_components/obelisk.js/build/obelisk.min.js"></script>
+    <script src="assets/js/game-of-life-v3.1.1.js"></script>
+</body>
 </html>
+
