@@ -569,20 +569,15 @@ var GOL = {
      */
     init: function () {
         "use strict";
-//        try {
         this.listLife.init();   // Reset/init algorithm
         this.helpers.readStateIntoListLife(this.states.acorn);
-        this.keepDOMElements(); // Keep DOM References (getElementsById)
+        this.initDOM(); // Keep DOM References (getElementsById)
         this.canvas.init();     // Init canvas GUI
-        //this.registerEvents();  // Register event handlers
         this.iso_canvas.init();
 
         this.prepare();
     },
 
-    /**
-     * Create a random pattern
-     */
     randomState: function () {
         "use strict";
         var i, liveCells = (this.rows * this.columns) * 0.12;
@@ -594,20 +589,12 @@ var GOL = {
         this.listLife.nextGeneration();
     },
 
-
-    /**
-     * Clean up actual state and prepare a new run
-     */
     cleanUp: function () {
         "use strict";
         this.listLife.init(); // Reset/init algorithm
         this.prepare();
     },
 
-
-    /**
-     * Prepare DOM elements and Canvas for a new run
-     */
     prepare: function () {
         "use strict";
         this.generation = this.times.algorithm = this.times.gui = 0;
@@ -625,12 +612,7 @@ var GOL = {
         }
     },
 
-
-    /**
-     * keepDOMElements
-     * Save DOM references for this session (one time execution)
-     */
-    keepDOMElements: function () {
+    initDOM: function () {
         "use strict";
         this.element.generation = document.getElementById('generation');
         this.element.livecells = document.getElementById('livecells');
@@ -648,24 +630,13 @@ var GOL = {
         this.helpers.registerEvent(document.getElementById('buttonClear'), 'click', this.handlers.buttons.clear, false);
     },
 
-
-    /**
-     * Run Next Step
-     */
     nextStep: function () {
         "use strict";
         var i, x, y, liveCellNumber, algorithmTime;
 
-        // Algorithm run
-
         algorithmTime = (new Date());
-
         liveCellNumber = this.listLife.nextGeneration();
-
         algorithmTime = (new Date()) - algorithmTime;
-
-
-        // Canvas run
 
         for (i = 0; i < this.listLife.redrawList.length; i += 1) {
             x = this.listLife.redrawList[i][0];
@@ -880,22 +851,15 @@ var GOL = {
         cellSize: 1,
         cellSpace: 1,
 
-
-        /**
-         * init
-         */
         init: function () {
             "use strict";
 
             this.canvas = document.getElementById('canvas');
             this.context = this.canvas.getContext('2d');
+            this.setCanvasSize();
             this.clearWorld();
         },
 
-
-        /**
-         * clearWorld
-         */
         clearWorld: function () {
             "use strict";
             var i, j;
@@ -910,20 +874,9 @@ var GOL = {
             }
         },
 
-
-        /**
-         * drawWorld
-         */
         drawWorld: function () {
             "use strict";
             var i, j;
-
-            // Dynamic canvas size
-            this.width = 1 + (this.cellSpace * GOL.columns) + (this.cellSize * GOL.columns);
-            this.canvas.setAttribute('width', this.width);
-
-            this.height = 1 + (this.cellSpace * GOL.rows) + (this.cellSize * GOL.rows);
-            this.canvas.getAttribute('height', this.height);
 
             for (i = GOL.rows - 1; i > 0; i -= 1) {
                 for (j = GOL.columns - 1; j > 0; j -= 1) {
@@ -936,9 +889,6 @@ var GOL = {
             }
         },
 
-        /**
-         * drawCell
-         */
         drawCell: function (i, j, alive) {
             "use strict";
 
@@ -965,10 +915,6 @@ var GOL = {
             );
         },
 
-
-        /**
-         * switchCell
-         */
         switchCell: function (i, j) {
             "use strict";
             if (GOL.listLife.isAlive(i, j)) {
@@ -980,10 +926,6 @@ var GOL = {
             }
         },
 
-
-        /**
-         * keepCellAlive
-         */
         keepCellAlive: function (i, j) {
             "use strict";
             if (i >= 0 && i < GOL.columns && j >= 0 && j < GOL.rows) {
@@ -992,10 +934,6 @@ var GOL = {
             }
         },
 
-
-        /**
-         * changeCelltoAlive
-         */
         changeCelltoAlive: function (i, j) {
             "use strict";
             if (i >= 0 && i < GOL.columns && j >= 0 && j < GOL.rows) {
@@ -1004,16 +942,21 @@ var GOL = {
             }
         },
 
-
-        /**
-         * changeCelltoDead
-         */
         changeCelltoDead: function (i, j) {
             "use strict";
             if (i >= 0 && i < GOL.columns && j >= 0 && j < GOL.rows) {
                 this.age[i][j] = -this.age[i][j]; // Keep trail
                 this.drawCell(i, j, false);
             }
+        },
+
+        setCanvasSize: function () {
+            "use strict";
+            this.width = 1 + (this.cellSpace * GOL.columns) + (this.cellSize * GOL.columns);
+            this.canvas.setAttribute('width', this.width);
+
+            this.height = 1 + (this.cellSpace * GOL.rows) + (this.cellSize * GOL.rows);
+            this.canvas.getAttribute('height', this.height);
         }
     },
 
