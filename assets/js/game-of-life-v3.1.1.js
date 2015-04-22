@@ -73,26 +73,10 @@ var GOL = {
 
         schemes: [
             {
-                color: '#F3F3F3'
+                color: '#000'
             },
         ]
     },
-
-
-    // Zoom level
-    zoom: {
-        current: 0,
-        schedule: false,
-
-        schemes: [
-            {
-                columns: 100,
-                rows: 80,
-                cellSize: 1
-            }
-        ]
-    },
-
 
     // Cell colors
     colors: {
@@ -964,8 +948,8 @@ var GOL = {
             this.canvas = document.getElementById('canvas');
             this.context = this.canvas.getContext('2d');
 
-            this.cellSize = GOL.zoom.schemes[GOL.zoom.current].cellSize;
-            this.cellSpace = 1;
+            this.cellSize = 1;
+            //this.cellSpace = 1;
 
             //GOL.helpers.registerEvent(this.canvas, 'mousedown', GOL.handlers.canvasMouseDown, false);
             //GOL.helpers.registerEvent(document, 'mouseup', GOL.handlers.canvasMouseUp, false);
@@ -1008,8 +992,8 @@ var GOL = {
             this.canvas.getAttribute('height', this.height);
 
             // Fill background
-            this.context.fillStyle = GOL.grid.schemes[GOL.grid.current].color;
-            this.context.fillRect(0, 0, this.width, this.height);
+            //this.context.fillStyle = GOL.grid.schemes[GOL.grid.current].color;
+            //this.context.fillRect(0, 0, this.width, this.height);
             /*
             for (i = 0; i < GOL.columns; i += 1) {
                 for (j = 0; j < GOL.rows; j += 1) {
@@ -1020,7 +1004,7 @@ var GOL = {
                     }
                 }
             }*/
-            for (i = GOL.rows - 1; i > 0 ; i -= 1) {
+            for (i = GOL.rows - 1; i > 0; i -= 1) {
                 for (j = GOL.columns - 1; j > 0; j -= 1) {
                     if (GOL.listLife.isAlive(j, i)) {
                         this.drawCell(j, i, true);
@@ -1425,7 +1409,6 @@ var GOL = {
                 }
             }
         }
-
     },
 
 
@@ -1447,8 +1430,6 @@ var GOL = {
                 }
             }
         },
-
-        urlParameters: null, // Cache
 
         /**
          * Return a random integer from [min, max]
