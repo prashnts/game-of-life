@@ -36,14 +36,11 @@ var GOL = {
         }
     },
 
-    // Trail state
     trail: {
         current: true,
         schedule: false
     },
 
-
-    // Grid style
     grid: {
         current: 0,
 
@@ -54,7 +51,6 @@ var GOL = {
         ]
     },
 
-    // Cell colors
     colors: {
         current: 0,
         schedule: false,
@@ -564,15 +560,12 @@ var GOL = {
         ]
     },
 
-    /**
-     * On Load Event
-     */
     init: function () {
         "use strict";
-        this.listLife.init();   // Reset/init algorithm
+        this.listLife.init();
         this.helpers.readStateIntoListLife(this.states.acorn);
-        this.initDOM(); // Keep DOM References (getElementsById)
-        this.canvas.init();     // Init canvas GUI
+        this.initDOM();
+        this.canvas.init();
         this.iso_canvas.init();
 
         this.prepare();
@@ -603,12 +596,12 @@ var GOL = {
         this.element.generation.innerHTML = '0';
         this.element.livecells.innerHTML = '0';
 
-        this.canvas.clearWorld(); // Reset GUI
-        this.canvas.drawWorld(); // Draw State
+        this.canvas.clearWorld();
+        this.canvas.drawWorld();
 
-        if (this.autoplay) { // Next Flow
+        if (this.autoplay) {
             this.autoplay = false;
-            this.handlers.buttons.run();
+            this.action.play();
         }
     },
 
@@ -616,18 +609,6 @@ var GOL = {
         "use strict";
         this.element.generation = document.getElementById('generation');
         this.element.livecells = document.getElementById('livecells');
-    },
-
-    registerEvents: function () {
-        "use strict";
-
-        // Keyboard Events
-        this.helpers.registerEvent(document.body, 'keyup', this.handlers.keyboard, false);
-
-        // Controls
-        this.helpers.registerEvent(document.getElementById('buttonRun'), 'click', this.handlers.buttons.run, false);
-        this.helpers.registerEvent(document.getElementById('buttonStep'), 'click', this.handlers.buttons.step, false);
-        this.helpers.registerEvent(document.getElementById('buttonClear'), 'click', this.handlers.buttons.clear, false);
     },
 
     nextStep: function () {
@@ -688,157 +669,30 @@ var GOL = {
         }
     },
 
-    handlers: {
-
-        mouseDown: false,
-        lastX: 0,
-        lastY: 0,
-
-
-        /**
-         *
-         */
-        canvasMouseDown: function (event) {
+    action: {
+        play: function () {
             "use strict";
-            var position = GOL.helpers.mousePosition(event);
-            GOL.canvas.switchCell(position[0], position[1]);
-            GOL.handlers.lastX = position[0];
-            GOL.handlers.lastY = position[1];
-            GOL.handlers.mouseDown = true;
+            GOL.running = true;
+            GOL.nextStep();
+        },
+        pause: function () {
+            "use strict";
+            GOL.running = false;
         },
 
-
-        /**
-         *
-         */
-        canvasMouseUp: function () {
+        step: function () {
             "use strict";
-            GOL.handlers.mouseDown = false;
+            GOL.nextStep();
         },
 
-
-        /**
-         *
-         */
-        canvasMouseMove: function (event) {
+        end: function () {
             "use strict";
-            if (GOL.handlers.mouseDown) {
-                var position = GOL.helpers.mousePosition(event);
-                if ((position[0] !== GOL.handlers.lastX) || (position[1] !== GOL.handlers.lastY)) {
-                    GOL.canvas.switchCell(position[0], position[1]);
-                    GOL.handlers.lastX = position[0];
-                    GOL.handlers.lastY = position[1];
-                }
-            }
-        },
-
-
-        /**
-         *
-         */
-        keyboard: function (e) {
-            "use strict";
-            var event = e;
-            if (!event) {
-                event = window.event;
-            }
-
-            if (event.keyCode === 67) { // Key: C
-                GOL.handlers.buttons.clear();
-            } else if (event.keyCode === 82) { // Key: R
-                GOL.handlers.buttons.run();
-            } else if (event.keyCode === 83) { // Key: S
-                GOL.handlers.buttons.step();
-            }
-        },
-
-
-        buttons: {
-            /**
-             * Button Handler - Run
-             */
-            run: function () {
-                "use strict";
-                //GOL.element.hint.style.display = 'none';
-
-                GOL.running = !GOL.running;
-                if (GOL.running) {
-                    GOL.nextStep();
-                    document.getElementById('buttonRun').value = 'Stop';
-                } else {
-                    document.getElementById('buttonRun').value = 'Run';
-                }
-            },
-
-
-            /**
-             * Button Handler - Next Step - One Step only
-             */
-            step: function () {
-                "use strict";
-                if (!GOL.running) {
-                    GOL.nextStep();
-                }
-            },
-
-
-            /**
-             * Button Handler - Clear World
-             */
-            clear: function () {
-                "use strict";
-                if (GOL.running) {
-                    GOL.clear.schedule = true;
-                    GOL.running = false;
-                    document.getElementById('buttonRun').value = 'Run';
-                } else {
-                    GOL.cleanUp();
-                }
-            },
-
-
-            /**
-             * Button Handler - Remove/Add Trail
-             */
-            trail: function () {
-                "use strict";
-                GOL.element.messages.layout.innerHTML = GOL.trail.current ? 'Trail is Off' : 'Trail is On';
-                GOL.trail.current = !GOL.trail.current;
-                if (GOL.running) {
-                    GOL.trail.schedule = true;
-                } else {
-                    GOL.canvas.drawWorld();
-                }
-            },
-
-
-            /**
-             *
-             */
-            colors: function () {
-                "use strict";
-                GOL.colors.current = (GOL.colors.current + 1) % GOL.colors.schemes.length;
-                GOL.element.messages.layout.innerHTML = 'Color Scheme #' + (GOL.colors.current + 1);
-                if (GOL.running) {
-                    GOL.colors.schedule = true; // Delay redraw
-                } else {
-                    GOL.canvas.drawWorld(); // Force complete redraw
-                }
-            },
-
-
-            /**
-             *
-             */
-            grid: function () {
-                "use strict";
-                GOL.grid.current = (GOL.grid.current + 1) % GOL.grid.schemes.length;
-                GOL.element.messages.layout.innerHTML = 'Grid Scheme #' + (GOL.grid.current + 1);
-                if (GOL.running) {
-                    GOL.grid.schedule = true; // Delay redraw
-                } else {
-                    GOL.canvas.drawWorld(); // Force complete redraw
-                }
+            if (GOL.running) {
+                GOL.clear.schedule = true;
+                GOL.running = false;
+                document.getElementById('buttonRun').value = 'Run';
+            } else {
+                GOL.cleanUp();
             }
         }
     },
