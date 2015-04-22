@@ -6,30 +6,6 @@
  * 04/Sep/2010
  */
 
-var len = 12;
-
-var canvas = document.getElementById('canvas-demo');
-
-// create pixel view container in point
-var point = new obelisk.Point(10, 10);
-var pixelView = new obelisk.PixelView(canvas, point);
-
-// create dimension instance
-var dimension = new obelisk.CubeDimension(len, len, len);
-var color = new obelisk.CubeColor().getByHorizontalColor(obelisk.ColorPattern.GRAY);
-var color_alive = new obelisk.CubeColor().getByHorizontalColor(0x42A5F5);
-var color_dead = new obelisk.CubeColor().getByHorizontalColor(0xFFFFFF);
-var color_trail = new obelisk.CubeColor().getByHorizontalColor(0xBEE6A1);
-var cube = new obelisk.Cube(dimension, color);
-var cube_alive = new obelisk.Cube(dimension, color_alive);
-var cube_dead = new obelisk.Cube(dimension, color_dead);
-var cube_trail = new obelisk.Cube(dimension, color_trail);
-
-var mul_x = 12, mul_y = 12;
-
-// render primitive to view
-pixelView.renderObject(cube);
-
 var GOL = {
 
     columns: 100,
@@ -595,7 +571,7 @@ var GOL = {
         "use strict";
         try {
             this.listLife.init();   // Reset/init algorithm
-            this.helpers.readStateIntoListLife(this.states.acorn);
+            this.helpers.readStateIntoListLife(this.states.glider_gun);
             this.keepDOMElements(); // Keep DOM References (getElementsById)
             this.canvas.init();     // Init canvas GUI
             this.registerEvents();  // Register event handlers
@@ -935,7 +911,7 @@ var GOL = {
         width: null,
         height: null,
         age: null,
-        cellSize: null,
+        cellSize: 1,
         cellSpace: 1,
 
 
@@ -948,12 +924,9 @@ var GOL = {
             this.canvas = document.getElementById('canvas');
             this.context = this.canvas.getContext('2d');
 
-            this.cellSize = 1;
-            //this.cellSpace = 1;
-
-            //GOL.helpers.registerEvent(this.canvas, 'mousedown', GOL.handlers.canvasMouseDown, false);
-            //GOL.helpers.registerEvent(document, 'mouseup', GOL.handlers.canvasMouseUp, false);
-            //GOL.helpers.registerEvent(this.canvas, 'mousemove', GOL.handlers.canvasMouseMove, false);
+            GOL.helpers.registerEvent(this.canvas, 'mousedown', GOL.handlers.canvasMouseDown, false);
+            GOL.helpers.registerEvent(document, 'mouseup', GOL.handlers.canvasMouseUp, false);
+            GOL.helpers.registerEvent(this.canvas, 'mousemove', GOL.handlers.canvasMouseMove, false);
 
             this.clearWorld();
         },
@@ -1025,21 +998,21 @@ var GOL = {
 
                 if (this.age[i][j] > -1) {
                     this.context.fillStyle = GOL.colors.schemes[GOL.colors.current].alive[this.age[i][j] % GOL.colors.schemes[GOL.colors.current].alive.length];
-                    new obelisk.PixelView(canvas, new obelisk.Point(i * mul_x, j * mul_y)).renderObject(cube_alive);
+                    //new obelisk.PixelView(canvas, new obelisk.Point(i * mul_x, j * mul_y)).renderObject(cube_alive);
                 }
             } else {
                 if (GOL.trail.current && this.age[i][j] < 0) {
                     this.context.fillStyle = GOL.colors.schemes[GOL.colors.current].trail[(this.age[i][j] * -1) % GOL.colors.schemes[GOL.colors.current].trail.length];
-                    new obelisk.PixelView(canvas, new obelisk.Point(i * mul_x, j * mul_y)).renderObject(cube_trail);
+                    //new obelisk.PixelView(canvas, new obelisk.Point(i * mul_x, j * mul_y)).renderObject(cube_trail);
                 } else {
                     this.context.fillStyle = GOL.colors.schemes[GOL.colors.current].dead;
-                    new obelisk.PixelView(canvas, new obelisk.Point(i * mul_x, j * mul_y)).renderObject(cube_dead);
+                    //new obelisk.PixelView(canvas, new obelisk.Point(i * mul_x, j * mul_y)).renderObject(cube_dead);
                 }
             }
 
             this.context.fillRect(
-                this.cellSpace + (this.cellSpace * i) + (this.cellSize * i),
-                this.cellSpace + (this.cellSpace * j) + (this.cellSize * j),
+                (this.cellSize * i),
+                (this.cellSize * j),
                 this.cellSize,
                 this.cellSize
             );
@@ -1094,6 +1067,51 @@ var GOL = {
                 this.age[i][j] = -this.age[i][j]; // Keep trail
                 this.drawCell(i, j, false);
             }
+        }
+    },
+
+    iso_canvas: {
+        context: null,
+        dimension: null,
+        cube_len: 12,
+        colors: {
+            alive: 0x42A5F5,
+            dead: 0xFFFFFF,
+            trail: 0xBEE6A1,
+        },
+        obelisk_color: {},
+        cubes: {},
+
+        init: function () {
+            "use strict";
+            this.context = document.getElementById('canvas-demo');
+            this.dimension = new obelisk.CubeDimension(this.cube_len, this.cube_len, this.cube_len);
+
+            this.obelisk_color.alive = new obelisk.CubeColor().getByHorizontalColor(this.colors.alive);
+            this.obelisk_color.dead = new obelisk.CubeColor().getByHorizontalColor(this.colors.dead);
+            this.obelisk_color.trail = new obelisk.CubeColor().getByHorizontalColor(this.colors.trail);
+
+            this.cubes.alive = new obelisk.Cube(this.dimension, this.obelisk_color.alive);
+            this.cubes.dead = new obelisk.Cube(this.dimension, this.obelisk_color.dead);
+            this.cubes.trail = new obelisk.Cube(this.dimension, this.obelisk_color.trail);
+
+            // create pixel view container in point
+            var point = new obelisk.Point(10, 10);
+            var pixelView = new obelisk.PixelView(canvas, point);
+
+            var cube = new obelisk.Cube(dimension, color);
+            var cube_alive = new obelisk.Cube(dimension, color_alive);
+            var cube_dead = new obelisk.Cube(dimension, color_dead);
+            var cube_trail = new obelisk.Cube(dimension, color_trail);
+
+            var mul_x = 12, mul_y = 12;
+
+            // render primitive to view
+            pixelView.renderObject(cube);
+        },
+
+        drawCell: function () {
+            "use strict";
         }
     },
 
