@@ -744,10 +744,6 @@ var GOL = {
         }
     },
 
-
-    /**
-     * Event Handerls
-     */
     handlers: {
 
         mouseDown: false,
@@ -903,10 +899,6 @@ var GOL = {
         }
     },
 
-
-    /**
-     *
-     */
     canvas: {
         context: null,
         width: null,
@@ -1100,20 +1092,18 @@ var GOL = {
         }
     },
 
+    /**
+     * Implementation of the List Life Algorithm for Conway's Game of Life.
+     * @type {Object}
+     */
     listLife: {
-
         actualState: [],
         redrawList: [],
 
-
-        /**
-         *
-         */
         init: function () {
             "use strict";
             this.actualState = [];
         },
-
 
         nextGeneration: function () {
             "use strict";
@@ -1131,12 +1121,12 @@ var GOL = {
                     // Possible dead neighbours
                     deadNeighbours = [
                         [x - 1, y - 1, 1],
-                        [x, y - 1, 1],
+                        [x,     y - 1, 1],
                         [x + 1, y - 1, 1],
-                        [x - 1, y, 1],
-                        [x + 1, y, 1],
+                        [x - 1, y,     1],
+                        [x + 1, y,     1],
                         [x - 1, y + 1, 1],
-                        [x, y + 1, 1],
+                        [x,     y + 1, 1],
                         [x + 1, y + 1, 1]
                     ];
 
@@ -1180,7 +1170,6 @@ var GOL = {
             }
 
             this.actualState = newState;
-
             return alive;
         },
 
@@ -1188,9 +1177,6 @@ var GOL = {
         middlePointer: 1,
         bottomPointer: 1,
 
-        /**
-         *
-         */
         getNeighboursFromAlive: function (x, y, i, possibleNeighboursList) {
             "use strict";
             var neighbours = 0, k;
@@ -1199,33 +1185,26 @@ var GOL = {
             if (this.actualState[i - 1] !== undefined) {
                 if (this.actualState[i - 1][0] === (y - 1)) {
                     for (k = this.topPointer; k < this.actualState[i - 1].length; k += 1) {
-
                         if (this.actualState[i - 1][k] >= (x - 1)) {
-
                             if (this.actualState[i - 1][k] === (x - 1)) {
                                 possibleNeighboursList[0] = undefined;
                                 this.topPointer = k + 1;
                                 neighbours += 1;
                             }
-
                             if (this.actualState[i - 1][k] === x) {
                                 possibleNeighboursList[1] = undefined;
                                 this.topPointer = k;
                                 neighbours += 1;
                             }
-
                             if (this.actualState[i - 1][k] === (x + 1)) {
                                 possibleNeighboursList[2] = undefined;
-
                                 if (k === 1) {
                                     this.topPointer = 1;
                                 } else {
                                     this.topPointer = k - 1;
                                 }
-
                                 neighbours += 1;
                             }
-
                             if (this.actualState[i - 1][k] > (x + 1)) {
                                 break;
                             }
@@ -1237,17 +1216,14 @@ var GOL = {
             // Middle
             for (k = 1; k < this.actualState[i].length; k += 1) {
                 if (this.actualState[i][k] >= (x - 1)) {
-
                     if (this.actualState[i][k] === (x - 1)) {
                         possibleNeighboursList[3] = undefined;
                         neighbours += 1;
                     }
-
                     if (this.actualState[i][k] === (x + 1)) {
                         possibleNeighboursList[4] = undefined;
                         neighbours += 1;
                     }
-
                     if (this.actualState[i][k] > (x + 1)) {
                         break;
                     }
@@ -1259,22 +1235,18 @@ var GOL = {
                 if (this.actualState[i + 1][0] === (y + 1)) {
                     for (k = this.bottomPointer; k < this.actualState[i + 1].length; k += 1) {
                         if (this.actualState[i + 1][k] >= (x - 1)) {
-
                             if (this.actualState[i + 1][k] === (x - 1)) {
                                 possibleNeighboursList[5] = undefined;
                                 this.bottomPointer = k + 1;
                                 neighbours += 1;
                             }
-
                             if (this.actualState[i + 1][k] === x) {
                                 possibleNeighboursList[6] = undefined;
                                 this.bottomPointer = k;
                                 neighbours += 1;
                             }
-
                             if (this.actualState[i + 1][k] === (x + 1)) {
                                 possibleNeighboursList[7] = undefined;
-
                                 if (k === 1) {
                                     this.bottomPointer = 1;
                                 } else {
@@ -1283,7 +1255,6 @@ var GOL = {
 
                                 neighbours += 1;
                             }
-
                             if (this.actualState[i + 1][k] > (x + 1)) {
                                 break;
                             }
@@ -1295,10 +1266,6 @@ var GOL = {
             return neighbours;
         },
 
-
-        /**
-         *
-         */
         isAlive: function (x, y) {
             "use strict";
             var i, j;
@@ -1315,10 +1282,6 @@ var GOL = {
             return false;
         },
 
-
-        /**
-         *
-         */
         removeCell: function (x, y, state) {
             "use strict";
             var i, j;
@@ -1339,10 +1302,6 @@ var GOL = {
             }
         },
 
-
-        /**
-         *
-         */
         addCell: function (x, y, state) {
             "use strict";
             if (state.length === 0) {
@@ -1414,12 +1373,7 @@ var GOL = {
         }
     },
 
-
-    /**
-     *
-     */
     helpers: {
-
         readStateIntoListLife: function (state) {
             "use strict";
             var i, j, y;
@@ -1434,64 +1388,9 @@ var GOL = {
             }
         },
 
-        /**
-         * Return a random integer from [min, max]
-         */
         random: function (min, max) {
             "use strict";
             return min <= max ? min + Math.round(Math.random() * (max - min)) : null;
-        },
-
-        /**
-         * Register Event
-         */
-        registerEvent: function (element, event, handler, capture) {
-            "use strict";
-            if (/msie/i.test(navigator.userAgent)) {
-                element.attachEvent('on' + event, handler);
-            } else {
-                element.addEventListener(event, handler, capture);
-            }
-        },
-
-
-        /**
-         *
-         */
-        mousePosition: function (e) {
-            "use strict";
-            // http://www.malleus.de/FAQ/getImgMousePos.html
-            // http://www.quirksmode.org/js/events_properties.html#position
-            var event, x, y, domObject, posx = 0, posy = 0, top = 0, left = 0, cellSize = GOL.zoom.schemes[GOL.zoom.current].cellSize + 1;
-
-            event = e;
-            if (!event) {
-                event = window.event;
-            }
-
-            if (event.pageX || event.pageY) {
-                posx = event.pageX;
-                posy = event.pageY;
-            } else if (event.clientX || event.clientY) {
-                posx = event.clientX + document.body.scrollLeft + document.documentElement.scrollLeft;
-                posy = event.clientY + document.body.scrollTop + document.documentElement.scrollTop;
-            }
-
-            domObject = event.target || event.srcElement;
-
-            while (domObject.offsetParent) {
-                left += domObject.offsetLeft;
-                top += domObject.offsetTop;
-                domObject = domObject.offsetParent;
-            }
-
-            domObject.pageTop = top;
-            domObject.pageLeft = left;
-
-            x = Math.ceil(((posx - domObject.pageLeft) / cellSize) - 1);
-            y = Math.ceil(((posy - domObject.pageTop) / cellSize) - 1);
-
-            return [x, y];
         }
     }
 
