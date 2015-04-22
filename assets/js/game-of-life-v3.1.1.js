@@ -6,7 +6,7 @@
  * 04/Sep/2010
  */
 
-var len = 20;
+var len = 12;
 
 var canvas = document.getElementById('canvas-demo');
 
@@ -17,27 +17,29 @@ var pixelView = new obelisk.PixelView(canvas, point);
 // create dimension instance
 var dimension = new obelisk.CubeDimension(len, len, len);
 var color = new obelisk.CubeColor().getByHorizontalColor(obelisk.ColorPattern.GRAY);
-var color_alive = new obelisk.CubeColor().getByHorizontalColor(obelisk.ColorPattern.BLUE);
-var color_dead = new obelisk.CubeColor().getByHorizontalColor(obelisk.ColorPattern.GRAY);
-var color_trail = new obelisk.CubeColor().getByHorizontalColor(obelisk.ColorPattern.PURPLE);
+var color_alive = new obelisk.CubeColor().getByHorizontalColor(0x42A5F5);
+var color_dead = new obelisk.CubeColor().getByHorizontalColor(0xFFFFFF);
+var color_trail = new obelisk.CubeColor().getByHorizontalColor(0xBEE6A1);
 var cube = new obelisk.Cube(dimension, color);
 var cube_alive = new obelisk.Cube(dimension, color_alive);
 var cube_dead = new obelisk.Cube(dimension, color_dead);
 var cube_trail = new obelisk.Cube(dimension, color_trail);
+
+var mul_x = 12, mul_y = 12;
 
 // render primitive to view
 pixelView.renderObject(cube);
 
 var GOL = {
 
-    columns: 0,
-    rows: 0,
+    columns: 100,
+    rows: 80,
 
     waitTime: 0,
     generation: 0,
 
     running: false,
-    autoplay: false,
+    autoplay: true,
 
     clear: {
         schedule: false
@@ -84,9 +86,9 @@ var GOL = {
 
         schemes: [
             {
-                columns: 180,
-                rows: 86,
-                cellSize: 4
+                columns: 100,
+                rows: 80,
+                cellSize: 1
             }
         ]
     },
@@ -609,9 +611,7 @@ var GOL = {
         "use strict";
         try {
             this.listLife.init();   // Reset/init algorithm
-            this.loadConfig();      // Load config from URL (autoplay, colors, zoom, ...)
-            //this.loadState();       // Load state from URL
-            this.randomState();
+            this.helpers.readStateIntoListLife(this.states.acorn);
             this.keepDOMElements(); // Keep DOM References (getElementsById)
             this.canvas.init();     // Init canvas GUI
             this.registerEvents();  // Register event handlers
@@ -620,19 +620,6 @@ var GOL = {
         } catch (e) {
             alert("Error: " + e);
         }
-    },
-
-
-    /**
-     * Load config from URL
-     */
-    loadConfig: function () {
-        "use strict";
-        this.autoplay = true;
-        this.trail.current = true;
-
-        this.rows = this.zoom.schemes[this.zoom.current].rows;
-        this.columns = this.zoom.schemes[this.zoom.current].columns;
     },
 
     /**
@@ -1023,13 +1010,22 @@ var GOL = {
             // Fill background
             this.context.fillStyle = GOL.grid.schemes[GOL.grid.current].color;
             this.context.fillRect(0, 0, this.width, this.height);
-
+            /*
             for (i = 0; i < GOL.columns; i += 1) {
                 for (j = 0; j < GOL.rows; j += 1) {
                     if (GOL.listLife.isAlive(i, j)) {
                         this.drawCell(i, j, true);
                     } else {
                         this.drawCell(i, j, false);
+                    }
+                }
+            }*/
+            for (i = GOL.rows - 1; i > 0 ; i -= 1) {
+                for (j = GOL.columns - 1; j > 0; j -= 1) {
+                    if (GOL.listLife.isAlive(j, i)) {
+                        this.drawCell(j, i, true);
+                    } else {
+                        this.drawCell(j, i, false);
                     }
                 }
             }
@@ -1045,15 +1041,15 @@ var GOL = {
 
                 if (this.age[i][j] > -1) {
                     this.context.fillStyle = GOL.colors.schemes[GOL.colors.current].alive[this.age[i][j] % GOL.colors.schemes[GOL.colors.current].alive.length];
-                    new obelisk.PixelView(canvas, new obelisk.Point(i * 20, j * 10)).renderObject(cube_alive);
+                    new obelisk.PixelView(canvas, new obelisk.Point(i * mul_x, j * mul_y)).renderObject(cube_alive);
                 }
             } else {
                 if (GOL.trail.current && this.age[i][j] < 0) {
                     this.context.fillStyle = GOL.colors.schemes[GOL.colors.current].trail[(this.age[i][j] * -1) % GOL.colors.schemes[GOL.colors.current].trail.length];
-                    new obelisk.PixelView(canvas, new obelisk.Point(i * 20, j * 10)).renderObject(cube_trail);
+                    new obelisk.PixelView(canvas, new obelisk.Point(i * mul_x, j * mul_y)).renderObject(cube_trail);
                 } else {
                     this.context.fillStyle = GOL.colors.schemes[GOL.colors.current].dead;
-                    new obelisk.PixelView(canvas, new obelisk.Point(i * 20, j * 10)).renderObject(cube_dead);
+                    new obelisk.PixelView(canvas, new obelisk.Point(i * mul_x, j * mul_y)).renderObject(cube_dead);
                 }
             }
 
