@@ -8,10 +8,10 @@
 
 var GOL = {
 
-    columns: 100,
-    rows: 80,
+    columns: Math.ceil(window.innerWidth / 12),
+    rows: Math.ceil(window.innerHeight / 12),
 
-    waitTime: 0,
+    waitTime: 40,
     generation: 0,
 
     running: false,
@@ -565,8 +565,8 @@ var GOL = {
         this.listLife.init();
         this.helpers.readStateIntoListLife(this.states.acorn);
         this.initDOM();
-        this.canvas.init();
         this.iso_canvas.init();
+        this.canvas.init();
 
         this.prepare();
     },
@@ -757,6 +757,8 @@ var GOL = {
                     this.age[i][j] = 0; // Dead
                 }
             }
+
+            GOL.iso_canvas.clear();
         },
 
         drawWorld: function () {
@@ -837,10 +839,10 @@ var GOL = {
 
         setCanvasSize: function () {
             "use strict";
-            this.width = 1 + (this.cellSpace * GOL.columns) + (this.cellSize * GOL.columns);
+            this.width = (this.cellSize * GOL.columns);
             this.canvas.setAttribute('width', this.width);
 
-            this.height = 1 + (this.cellSpace * GOL.rows) + (this.cellSize * GOL.rows);
+            this.height = (this.cellSize * GOL.rows);
             this.canvas.setAttribute('height', this.height);
         }
     },
@@ -891,6 +893,7 @@ var GOL = {
 
         clear: function () {
             "use strict";
+            this.context.getContext('2d').clearRect(0, 0, this.context.width, this.context.height);
             return;
         }
     },
