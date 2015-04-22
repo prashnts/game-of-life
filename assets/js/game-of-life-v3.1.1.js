@@ -569,18 +569,15 @@ var GOL = {
      */
     init: function () {
         "use strict";
-        try {
-            this.listLife.init();   // Reset/init algorithm
-            this.helpers.readStateIntoListLife(this.states.acorn);
-            this.keepDOMElements(); // Keep DOM References (getElementsById)
-            this.canvas.init();     // Init canvas GUI
-            //this.registerEvents();  // Register event handlers
-            this.iso_canvas.init();
+//        try {
+        this.listLife.init();   // Reset/init algorithm
+        this.helpers.readStateIntoListLife(this.states.acorn);
+        this.keepDOMElements(); // Keep DOM References (getElementsById)
+        this.canvas.init();     // Init canvas GUI
+        //this.registerEvents();  // Register event handlers
+        this.iso_canvas.init();
 
-            this.prepare();
-        } catch (e) {
-            alert("Error: " + e);
-        }
+        this.prepare();
     },
 
     /**
@@ -618,7 +615,6 @@ var GOL = {
 
         this.element.generation.innerHTML = '0';
         this.element.livecells.innerHTML = '0';
-        this.element.steptime.innerHTML = '0 / 0 (0 / 0)';
 
         this.canvas.clearWorld(); // Reset GUI
         this.canvas.drawWorld(); // Draw State
@@ -637,17 +633,9 @@ var GOL = {
     keepDOMElements: function () {
         "use strict";
         this.element.generation = document.getElementById('generation');
-        this.element.steptime = document.getElementById('steptime');
         this.element.livecells = document.getElementById('livecells');
-        this.element.messages.layout = document.getElementById('layoutMessages');
-        this.element.hint = document.getElementById('hint');
     },
 
-
-    /**
-     * registerEvents
-     * Register event handlers for this session (one time execution)
-     */
     registerEvents: function () {
         "use strict";
 
@@ -658,12 +646,6 @@ var GOL = {
         this.helpers.registerEvent(document.getElementById('buttonRun'), 'click', this.handlers.buttons.run, false);
         this.helpers.registerEvent(document.getElementById('buttonStep'), 'click', this.handlers.buttons.step, false);
         this.helpers.registerEvent(document.getElementById('buttonClear'), 'click', this.handlers.buttons.clear, false);
-        this.helpers.registerEvent(document.getElementById('buttonExport'), 'click', this.handlers.buttons.export_state, false);
-
-        // Layout
-        this.helpers.registerEvent(document.getElementById('buttonTrail'), 'click', this.handlers.buttons.trail, false);
-        this.helpers.registerEvent(document.getElementById('buttonGrid'), 'click', this.handlers.buttons.grid, false);
-        this.helpers.registerEvent(document.getElementById('buttonColors'), 'click', this.handlers.buttons.colors, false);
     },
 
 
@@ -672,7 +654,7 @@ var GOL = {
      */
     nextStep: function () {
         "use strict";
-        var i, x, y, r, liveCellNumber, algorithmTime, guiTime;
+        var i, x, y, liveCellNumber, algorithmTime;
 
         // Algorithm run
 
@@ -684,8 +666,6 @@ var GOL = {
 
 
         // Canvas run
-
-        guiTime = (new Date());
 
         for (i = 0; i < this.listLife.redrawList.length; i += 1) {
             x = this.listLife.redrawList[i][0];
@@ -699,8 +679,6 @@ var GOL = {
                 this.canvas.changeCelltoDead(x, y);
             }
         }
-
-        guiTime = (new Date()) - guiTime;
 
         // Pos-run updates
 
@@ -726,11 +704,6 @@ var GOL = {
         this.generation += 1;
         this.element.generation.innerHTML = this.generation;
         this.element.livecells.innerHTML = liveCellNumber;
-
-        r = 1.0 / this.generation;
-        this.times.algorithm = (this.times.algorithm * (1 - r)) + (algorithmTime * r);
-        this.times.gui = (this.times.gui * (1 - r)) + (guiTime * r);
-        this.element.steptime.innerHTML = algorithmTime + ' / ' + guiTime + ' (' + Math.round(this.times.algorithm) + ' / ' + Math.round(this.times.gui) + ')';
 
         // Flow Control
         if (this.running) {
@@ -916,11 +889,6 @@ var GOL = {
 
             this.canvas = document.getElementById('canvas');
             this.context = this.canvas.getContext('2d');
-
-            GOL.helpers.registerEvent(this.canvas, 'mousedown', GOL.handlers.canvasMouseDown, false);
-            GOL.helpers.registerEvent(document, 'mouseup', GOL.handlers.canvasMouseUp, false);
-            GOL.helpers.registerEvent(this.canvas, 'mousemove', GOL.handlers.canvasMouseMove, false);
-
             this.clearWorld();
         },
 
@@ -1396,12 +1364,5 @@ var GOL = {
 
 };
 
-
-/**
- * Init on 'load' event
- */
-GOL.helpers.registerEvent(window, 'load', function () {
-    "use strict";
-    GOL.init();
-}, false);
+GOL.init();
 
