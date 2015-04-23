@@ -5,13 +5,20 @@ Implementation of List Life algorithm for the Game of Life
 Game of Life is a cellular automaton devised by the British mathematician John Horton Conway in 1970. 
 
 #Game Rules
-The universe of the Game of Life is an infinite two-dimensional grid of binary-state cells. Each cells can have either a `alive`, or `dead` state. Every one of the cells can interact with its eight neighbors. The interaction function may be defined as:
+The universe of the Game of Life is an infinite two-dimensional grid of binary-state cells. Each cells can have either a `alive`, or `dead` state. Every one of the cells can interact within its Moore Neighborhood. The Moore Neighborhood are the eight surrounding cells to the cell. See Figure.
 
+The interaction function that defines the transition is defined as a function of the number of neighbor cells that are alive. It is given as:
 
-Due to each interaction, the 
-each of which is in one of two possible states, alive or dead. Every cell interacts with its eight neighbours, which are the cells that are horizontally, vertically, or diagonally adjacent. At each step in time, the following transitions occur:
+- Live cell with fewer than two live neighbors dies. (under-population)
+- Live cell with two or three live neighbors lives on to the next generation.
+- Live cell with more than three live neighbors dies. (overcrowding)
+- Dead cell with exactly three live neighbors becomes a live cell. (reproduction)
 
-Any live cell with fewer than two live neighbours dies, as if caused by under-population.
-Any live cell with two or three live neighbours lives on to the next generation.
-Any live cell with more than three live neighbours dies, as if by overcrowding.
-Any dead cell with exactly three live neighbours becomes a live cell, as if by reproduction.
+#Game Patterns
+Various different types of patterns occur in the Game of Life.
+These include:
+
+- Still lifes: These do not change between iterations.
+- Oscillators: These oscillate between different repeating patterns with a given period.
+- Spaceships: These patterns translate themselves across the universe of the Game.
+
