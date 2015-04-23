@@ -564,6 +564,7 @@ var GOL = {
         "use strict";
         this.listLife.init();
         this.helpers.readStateIntoListLife(this.states.acorn);
+        this.action.switchSimulation(0);
         this.initDOM();
         this.iso_canvas.init();
         this.canvas.init();
