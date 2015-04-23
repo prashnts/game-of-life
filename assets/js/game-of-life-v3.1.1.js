@@ -563,11 +563,11 @@ var GOL = {
     init: function () {
         "use strict";
         this.listLife.init();
-        this.helpers.readStateIntoListLife(this.states.acorn);
-        this.action.switchSimulation(0);
+        //this.helpers.readStateIntoListLife(this.states.acorn);
         this.initDOM();
         this.iso_canvas.init();
         this.canvas.init();
+        this.action.switchSimulation(0);
 
         this.prepare();
     },
