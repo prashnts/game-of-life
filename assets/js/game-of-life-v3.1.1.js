@@ -11,7 +11,7 @@ var GOL = {
     columns: Math.ceil(window.innerWidth / 12),
     rows: Math.ceil(window.innerHeight / 12),
 
-    waitTime: 40,
+    waitTime: 10,
     generation: 0,
 
     running: false,
@@ -854,7 +854,7 @@ var GOL = {
         colors: {
             alive: 0x42A5F5,
             dead: 0xFFFFFF,
-            trail: 0xBEE6A1,
+            trail: 0xA6F0CC,
         },
         obelisk_color: {},
         cubes: {},
